@@ -1,0 +1,165 @@
+MICROSOFT CORPORATION
+ANNUAL REPORT — FISCAL YEAR 2024
+For the Year Ended June 30, 2024
+
+================================================================================
+LETTER TO SHAREHOLDERS
+================================================================================
+
+Dear Fellow Shareholders,
+
+Fiscal Year 2024 was a defining year for Microsoft. We crossed $245 billion in
+annual revenue, driven by the accelerating adoption of cloud services and the
+transformative potential of AI embedded across our entire product stack.
+
+Our commitment to responsible AI, as articulated through our AI Principles and
+the Microsoft Responsible AI Standard, has become a true competitive differentiator.
+Organizations worldwide are choosing Microsoft not only for our technical
+capabilities but also for our commitment to safety, privacy, and transparency.
+
+The partnership with OpenAI continues to generate extraordinary strategic value.
+Azure OpenAI Service now serves more than 65,000 enterprise customers globally,
+including 85% of Fortune 500 companies. GitHub Copilot has crossed 1.8 million
+paid subscribers, making it the most widely adopted AI developer tool in history.
+
+Satya Nadella, Chairman and CEO
+
+================================================================================
+CONSOLIDATED FINANCIAL RESULTS
+================================================================================
+
+REVENUE BY SEGMENT (in billions USD, FY2024):
+
+  Productivity & Business Processes:
+    Office Commercial (subscriptions & cloud): $42.4B   (+13% YoY)
+    Office Consumer:                            $6.9B    (+5% YoY)
+    LinkedIn:                                  $16.4B   (+10% YoY)
+    Dynamics 365 & ERP:                        $6.6B   (+18% YoY)
+    Segment Total:                             $77.9B   (+12% YoY)
+
+  Intelligent Cloud:
+    Azure & Cloud Services:                    $75.4B   (+29% YoY)
+    SQL Server, Windows Server (on-premise):   $10.5B    (-3% YoY)
+    GitHub Enterprise:                          $3.9B   (+24% YoY)
+    Segment Total:                             $96.2B   (+19% YoY)
+
+  More Personal Computing:
+    Windows OEM & Commercial:                  $14.0B    (+7% YoY)
+    Devices (Surface):                          $5.1B    (-8% YoY)
+    Xbox Content & Services:                   $10.3B   (+61% YoY)*
+    Bing & Search Advertising:                 $13.8B   (+12% YoY)
+    Segment Total:                             $69.1B   (+17% YoY)
+
+  TOTAL REVENUE:                              $245.1B   (+16% YoY)
+
+  * Xbox growth reflects full-year inclusion of Activision Blizzard (acquired
+    October 2023 for $68.7 billion).
+
+PROFITABILITY:
+  Gross Profit:                               $169.0B   (68.9% margin)
+  Operating Income:                           $109.4B   (44.6% margin)
+  Net Income:                                  $88.1B   (36.0% margin)
+  Diluted EPS:                                 $11.80   (+22% YoY)
+  Free Cash Flow:                              $74.1B
+
+================================================================================
+AZURE AI CLOUD PLATFORM — STRATEGIC OVERVIEW
+================================================================================
+
+Azure is the cornerstone of Microsoft's AI strategy. In FY2024, Azure revenue
+grew 29% in constant currency terms, with AI services contributing an estimated
+8-10 percentage points of that growth — the first time AI has been quantified
+as a measurable growth driver.
+
+AZURE AI SERVICE OFFERINGS:
+  - Azure OpenAI Service: Access to GPT-4o, GPT-4 Turbo, DALL-E 3, Whisper,
+    and Embeddings APIs within Microsoft's enterprise-grade, compliant cloud.
+    Offers private deployment, data residency controls, and Azure Active
+    Directory integration.
+  - Azure Machine Learning: End-to-end MLOps platform for custom model training,
+    deployment, and monitoring at scale.
+  - Azure Cognitive Services (renamed Azure AI Services): Pre-built AI APIs for
+    vision, speech, language, and decision workloads.
+  - Microsoft Fabric: Unified analytics platform combining data lakes, data
+    warehouses, Power BI, and real-time intelligence into a single product.
+    Crossed 14,000 paid customers within 12 months of general availability.
+
+DATA CENTER EXPANSION:
+  Microsoft committed $50 billion in capital expenditure for FY2024, with the
+  majority directed toward AI infrastructure — GPU clusters, networking fabric,
+  and power infrastructure. The company is building or expanding data centers
+  across more than 60 geographic regions globally.
+
+  AI infrastructure challenges include:
+    - Securing sufficient NVIDIA H100/H200 GPU allocation (competing with
+      hyperscalers Amazon, Google, and Meta for constrained supply)
+    - Power procurement: each new AI data center campus requires 100-500MW of
+      power capacity, creating grid constraints in key markets
+    - Water usage for cooling in arid regions faces regulatory scrutiny
+    - Lead times for high-voltage electrical equipment (transformers) now
+      exceed 36 months in the US market
+
+================================================================================
+ACTIVISION BLIZZARD INTEGRATION
+================================================================================
+
+The $68.7 billion acquisition of Activision Blizzard, completed October 2023
+after an 18-month regulatory battle, added approximately $7.5 billion in
+incremental revenue in FY2024 (partial year) and created the world's third-
+largest gaming company by revenue.
+
+Integration highlights:
+  - Call of Duty, World of Warcraft, Candy Crush added to Xbox Game Pass
+    Ultimate, driving net subscriber additions of approximately 2.1 million
+  - Activision King mobile studio (Candy Crush franchise) generated $2.7B in
+    mobile gaming revenue, now part of Microsoft's mobile gaming portfolio
+  - Planned headcount synergies of 1,900 positions announced in January 2024
+  - Technology integration with Azure cloud for multiplayer game hosting
+
+Regulatory risk: The acquisition remains under scrutiny in certain jurisdictions.
+The FTC's administrative case was dismissed in September 2024, but appeals
+proceedings may continue. The UK CMA approved the deal in November 2023 with
+structural remedies related to cloud gaming rights.
+
+================================================================================
+SUSTAINABILITY AND ESG
+================================================================================
+
+Microsoft reaffirmed its commitment to become carbon negative by 2030 and to
+remove all historical carbon emissions by 2050. Key FY2024 metrics:
+
+  Carbon Emissions (Scope 1+2):        Reduced 6.9% vs. FY2023
+  Renewable Energy Procurement:        90% of electricity from renewables
+  Water Replenishment:                 Replenished 125% of water consumed
+  Waste Diverted from Landfill:        13,492 metric tons
+
+The rapid expansion of AI data centers poses the greatest challenge to these
+commitments. Power usage effectiveness (PUE) for AI GPU clusters is significantly
+higher than traditional cloud workloads, requiring aggressive investment in
+advanced cooling, on-site generation, and long-term renewable power agreements.
+
+================================================================================
+RISK FACTORS
+================================================================================
+
+1. AI regulatory risk: EU AI Act, US Executive Order on AI, and emerging
+   national AI regulations could constrain product capabilities or require
+   costly compliance modifications.
+2. Cybersecurity: The January 2024 Microsoft Exchange breach by Russian state
+   actor Midnight Blizzard (APT29) raised concerns about the security of
+   Microsoft cloud products and resulted in Congressional scrutiny.
+3. Competition: Google Cloud and AWS continue to compete aggressively on price
+   and feature parity in cloud infrastructure.
+4. OpenAI dependency: Microsoft's AI differentiation is partially dependent on
+   its exclusive access to OpenAI models. Any deterioration of this relationship,
+   or the development of comparable open-source alternatives, could erode
+   competitive advantage.
+5. Antitrust: EU investigation into Teams bundling and potential US DOJ inquiry
+   into cloud market practices.
+6. Economic cycle: Enterprise software spending is sensitive to macroeconomic
+   conditions; a recession scenario could reduce seat counts and renewal rates.
+
+================================================================================
+This report contains forward-looking statements. See Microsoft's Form 10-K for
+the year ended June 30, 2024, filed with the SEC, for complete risk disclosures.
+================================================================================

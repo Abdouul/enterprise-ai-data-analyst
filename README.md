@@ -1,10 +1,10 @@
 # Enterprise AI Data Analyst
 
-Assistant analytique pour documents financiers d'entreprise. Le projet combine un pipeline ETL PDF, une base SQL locale, une recherche vectorielle Qdrant et une API FastAPI.
+Assistant analytique pour documents financiers d'entreprise. Le projet combine un pipeline ETL documentaire, une base SQL locale, une recherche vectorielle Qdrant et une API FastAPI.
 
 ## Structure
 
-- `data/raw_pdfs/`: rapports PDF d'origine.
+- `data/raw_txts/`: dataset Phase 1 de 10 documents financiers texte.
 - `data/cleaned/`: texte nettoye et chunks exportes.
 - `data/finance.db`: base SQLite locale.
 - `src/etl/`: parsing, nettoyage, chunking et ingestion Qdrant.
@@ -26,15 +26,28 @@ pip install -r requirements.txt
 docker compose up -d qdrant
 ```
 
-## Pipeline ETL
+## Phase 1 - Vector ETL Pipeline
+
+Le dataset contient 10 documents financiers d'entreprise dans `data/raw_txts/`. Chaque chunk recoit un payload JSON avec au minimum `company_name`, `document_year`, `document_period`, `document_type`, `section_title`, `page` et `source_file`.
 
 ```bash
-python -m src.etl.parse_pdfs --input data/raw_pdfs --output data/cleaned/parsed.jsonl
+python -m src.etl.parse_documents --input data/raw_txts --output data/cleaned/parsed.jsonl
 python -m src.etl.clean_text --input data/cleaned/parsed.jsonl --output data/cleaned/cleaned.jsonl
 python -m src.etl.chunking --input data/cleaned/cleaned.jsonl --output data/cleaned/chunks.jsonl
-python -m src.etl.ingest_qdrant --input data/cleaned/chunks.jsonl
 ```
 
+Pipeline complet sans ingestion:
+
+```bash
+python -m src.etl.run_phase1
+```
+
+Pipeline complet avec Qdrant et embeddings HuggingFace locaux:
+
+```bash
+docker compose up -d qdrant
+python -m src.etl.run_phase1 --ingest
+```
 ## API
 
 ```bash

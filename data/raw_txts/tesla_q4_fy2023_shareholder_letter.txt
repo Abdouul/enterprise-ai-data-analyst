@@ -1,0 +1,156 @@
+TESLA, INC.
+Q4 AND FULL YEAR 2023 UPDATE
+For the Quarter and Year Ended December 31, 2023
+
+================================================================================
+SHAREHOLDER LETTER SUMMARY
+================================================================================
+
+Tesla's mission — accelerating the world's transition to sustainable energy —
+drove record deliveries in 2023, with 1.81 million vehicles delivered globally,
+a 38% increase versus 2022. However, the year was marked by aggressive price
+reductions that weighed significantly on margins, as the company prioritized
+volume and market share over near-term profitability.
+
+The energy storage business reached an inflection point. Megapack deployments
+hit a record 14.7 GWh in 2023, generating $6.0 billion in Energy Generation
+and Storage segment revenue. This segment's economics are becoming increasingly
+important to Tesla's long-term financial profile.
+
+================================================================================
+FULL YEAR 2023 FINANCIAL SUMMARY
+================================================================================
+
+REVENUE (in billions USD, FY2023):
+  Automotive Sales:               $78.5B    (+15% YoY)
+  Automotive Leasing:              $2.1B     (+4% YoY)
+  Automotive Regulatory Credits:  $1.8B    (+11% YoY)
+  Energy Generation & Storage:    $6.0B    (+54% YoY)
+  Services & Other:               $8.3B    (+37% YoY)
+  TOTAL REVENUE:                 $96.8B    (+19% YoY)
+
+PROFITABILITY:
+  Gross Profit:                   $17.7B   (18.2% margin — down from 25.6% in 2022)
+  Operating Income:                $8.9B    (9.2% margin — down from 16.8% in 2022)
+  Net Income (GAAP):               $15.0B   (includes $5.9B tax benefit)
+  Net Income (Non-GAAP):           $10.9B
+  Free Cash Flow:                   $4.4B
+  Diluted EPS (GAAP):               $4.73
+
+Q4 2023 SPECIFICS:
+  Deliveries:                    484,507 vehicles (+20% YoY)
+  Production:                    494,989 vehicles
+  Automotive Gross Margin:         17.6% (down ~800bps from Q4 2022)
+
+================================================================================
+PRODUCTION AND DELIVERY BREAKDOWN
+================================================================================
+
+FY2023 DELIVERIES BY MODEL:
+  Model 3 / Model Y (combined):  1,739,707  (96.1% of total)
+  Model S / Model X (combined):     71,440   (3.9% of total)
+  Cybertruck:                         ~2,500  (limited ramp, deliveries in Dec 2023)
+  TOTAL:                          1,808,581
+
+FACTORY CAPACITY (ANNUAL RUN RATES):
+  Fremont, CA (US):               650,000 units/year (Model S/X/3/Y)
+  Giga Texas, Austin (US):        250,000 units/year (Model Y, Cybertruck)
+  Giga Berlin, Germany (EU):      375,000 units/year (Model Y)
+  Giga Shanghai, China:           950,000 units/year (Model 3/Y)
+  TOTAL GLOBAL CAPACITY:        2,225,000 units/year
+
+Giga Shanghai remains Tesla's highest-volume and lowest-cost manufacturing
+facility. The plant achieved a record 947,000 units produced in 2023, benefiting
+from deep integration with Chinese suppliers for battery cells, structural
+components, and electronics. Approximately 52% of Tesla's global production
+is sourced from Giga Shanghai.
+
+================================================================================
+PRICING STRATEGY AND MARGIN PRESSURE
+================================================================================
+
+Tesla initiated a series of price cuts beginning in January 2023, reducing
+average selling prices by 15-25% across its lineup in the United States and
+other key markets. The rationale was threefold:
+
+1. DEMAND STIMULATION: Rising interest rates materially increased monthly
+   payment burdens for financed buyers. A $5,000 reduction in vehicle price
+   offsets approximately $80-90/month in payment at prevailing rates.
+
+2. MARKET SHARE DEFENSE: Competition from BYD, Volkswagen ID series, Hyundai/Kia,
+   and GM's Chevrolet Equinox EV required Tesla to maintain price competitiveness.
+
+3. IRA ELIGIBILITY: Pricing vehicles below the Inflation Reduction Act thresholds
+   ($55,000 for cars, $80,000 for SUVs/trucks) to maximize consumer tax credit
+   eligibility and stimulate US demand.
+
+Impact: Automotive gross margin declined from approximately 29% in Q1 2022 to
+17.6% by Q4 2023, a contraction of over 1,000 basis points. Management guided
+toward prioritizing volume in the near term, with margin recovery expected as
+the cost reduction roadmap (next-generation vehicle platform, 48V architecture,
+die-cast manufacturing) is implemented.
+
+================================================================================
+FULL SELF-DRIVING (FSD) AND AI STRATEGY
+================================================================================
+
+Tesla's vision-only Full Self-Driving system crossed 1 billion miles driven
+cumulatively in 2023. The company released FSD v12, a complete rewrite using
+end-to-end neural networks trained on real-world video data, abandoning the
+previous hand-coded rules-based approach.
+
+FSD Monetization:
+  - FSD package price (US): $12,000 one-time or $199/month subscription
+  - FSD attach rate at purchase: estimated 12-15%
+  - Total FSD deferred revenue balance: approximately $3.2 billion
+    (recognized over the software update life of each vehicle)
+
+Dojo Supercomputer: Tesla's proprietary AI training cluster, using internally
+designed D1 chips, reached over 1 exaflop of processing capacity. The system
+is designed exclusively for training Tesla's neural networks on video data from
+the fleet's cameras. Elon Musk has indicated Dojo capacity may be sold to third
+parties, positioning Tesla as an AI infrastructure company.
+
+Robotaxi Platform: Tesla announced plans to launch a robotaxi service using
+a purpose-built vehicle (no steering wheel, no pedals) by 2025. The success
+of this plan is entirely dependent on regulatory approval for autonomous driving
+in key jurisdictions — a timeline that has repeatedly slipped.
+
+================================================================================
+ENERGY BUSINESS MOMENTUM
+================================================================================
+
+The Energy Generation and Storage segment is increasingly material:
+
+  Megapack (grid-scale storage) deployments:  14.7 GWh  (+125% YoY)
+  Powerwall (home storage) deployments:       ~600,000 units
+  Solar Roof & Solar Panels:                   ~96 MW installed
+
+Megapack gross margin reached approximately 24% in Q4 2023, exceeding
+Automotive gross margin for the first time — a significant structural milestone.
+Tesla's Lathrop, CA Megafactory produces approximately 40 GWh/year of Megapack
+capacity; a second factory in Shanghai is under development.
+
+================================================================================
+KEY RISKS
+================================================================================
+
+1. Chinese EV competition: BYD surpassed Tesla in global EV deliveries in
+   Q4 2023. BYD's vertically integrated battery and vehicle manufacturing gives
+   it a structural cost advantage in China and emerging markets.
+2. Elon Musk key-person risk: Musk's involvement with X (Twitter), SpaceX,
+   xAI, and political activities raises governance concerns and management
+   bandwidth questions.
+3. Autonomous driving regulatory risk: FSD approval timelines are uncertain
+   in the US, EU, and China.
+4. Margin recovery timeline: Cost reduction programs may take 18-24 months
+   to materially recover automotive margins.
+5. Cybertruck ramp: Production challenges and mixed consumer reception.
+6. Labor relations: The UAW organizing campaign at Giga Texas represents a
+   new labor risk for Tesla, which has historically operated as a non-union shop.
+
+================================================================================
+This document summarizes Tesla's Q4 and FY2023 Shareholder Letter. Not a
+substitute for Tesla's SEC filings. Forward-looking statements are subject to
+material risks and uncertainties.
+================================================================================

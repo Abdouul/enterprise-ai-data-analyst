@@ -13,8 +13,6 @@ env/
 .mypy_cache/
 .ruff_cache/
 
-data/raw_pdfs/*
-!data/raw_pdfs/.gitkeep
 data/cleaned/*
 !data/cleaned/.gitkeep
 data/finance.db

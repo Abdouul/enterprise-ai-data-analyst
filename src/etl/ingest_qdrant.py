@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import uuid
 from pathlib import Path
 
 from qdrant_client import QdrantClient
@@ -13,7 +14,11 @@ from sentence_transformers import SentenceTransformer
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
-def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name: str = DEFAULT_MODEL) -> int:
+def point_id(chunk_id: str) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
+
+
+def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name: str = DEFAULT_MODEL, batch_size: int = 64) -> int:
     model = SentenceTransformer(model_name)
     client = QdrantClient(url=qdrant_url)
     vector_size = model.get_sentence_embedding_dimension()
@@ -23,16 +28,23 @@ def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name
         vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
     )
 
-    points = []
+    points: list[PointStruct] = []
+    total = 0
     with input_file.open("r", encoding="utf-8") as handle:
-        for offset, line in enumerate(handle):
+        for line in handle:
             record = json.loads(line)
             vector = model.encode(record["text"]).tolist()
-            points.append(PointStruct(id=offset, vector=vector, payload=record))
+            payload = {**record, "metadata": record.get("metadata", {})}
+            points.append(PointStruct(id=point_id(record["id"]), vector=vector, payload=payload))
+            if len(points) >= batch_size:
+                client.upsert(collection_name=collection, points=points)
+                total += len(points)
+                points = []
 
     if points:
         client.upsert(collection_name=collection, points=points)
-    return len(points)
+        total += len(points)
+    return total
 
 
 def main() -> None:
@@ -41,8 +53,9 @@ def main() -> None:
     parser.add_argument("--collection", default=os.getenv("QDRANT_COLLECTION", "finance_docs"))
     parser.add_argument("--qdrant-url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--batch-size", default=64, type=int)
     args = parser.parse_args()
-    count = ingest_chunks(args.input, args.collection, args.qdrant_url, args.model)
+    count = ingest_chunks(args.input, args.collection, args.qdrant_url, args.model, args.batch_size)
     print(f"Ingested {count} chunk(s) into Qdrant collection {args.collection}")
 
 

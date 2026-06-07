@@ -1,0 +1,207 @@
+GOLDMAN SACHS GROUP, INC.
+FORM 10-K — RISK FACTORS EXCERPT
+Annual Report for the Year Ended December 31, 2023
+
+================================================================================
+ITEM 1A. RISK FACTORS
+================================================================================
+
+The following is a summary of the principal risks that could materially and
+adversely affect our business, financial condition, and results of operations.
+This summary should be read in conjunction with the full risk factor disclosures
+in Goldman Sachs' complete Form 10-K filing.
+
+--------------------------------------------------------------------------------
+MARKET AND LIQUIDITY RISKS
+--------------------------------------------------------------------------------
+
+MARKET RISK — INTEREST RATE SENSITIVITY
+Our businesses are materially affected by conditions in the global financial
+markets, particularly interest rate levels and volatility. In 2023, we
+experienced the impact of the most aggressive Federal Reserve rate-hiking cycle
+since the 1980s, with the federal funds rate rising to a 22-year high of
+5.25-5.50%. This environment has had mixed effects:
+
+  Positive impacts:
+    - Net interest income on our banking and lending portfolio has expanded
+      as floating-rate assets reprice upward
+    - Asset and Wealth Management fee income benefits from higher cash sweep
+      rates and money market fund yields
+    - Fixed income intermediation revenues benefit from elevated volatility
+
+  Negative impacts:
+    - Investment banking deal volumes (M&A, IPO) remain significantly below
+      historical averages due to buyer-seller valuation gaps caused by higher
+      discount rates
+    - Commercial real estate (CRE) portfolio faces increased stress as
+      property valuations have declined 20-30% from peak in certain segments
+    - Loan loss provisions have increased for consumer lending (Marcus platform)
+
+CREDIT RISK — COMMERCIAL REAL ESTATE
+Our exposure to commercial real estate credit risk has become a heightened
+focus of regulators and investors. Key exposures include:
+
+  - Office CRE: Our outstanding office CRE loans and securities total
+    approximately $4.9 billion. Office vacancy rates in major US markets
+    (San Francisco: 32%, New York: 19%, Chicago: 22%) have continued to
+    rise following COVID-era shift to hybrid work. Many borrowers face
+    refinancing risk as loans originated in 2019-2021 at low rates mature
+    and must be refinanced at rates 300-400bps higher.
+
+  - Multifamily Housing: Rising insurance costs and property taxes, combined
+    with rent control ordinances in certain markets, are compressing net
+    operating income for multifamily CRE borrowers.
+
+  We have established specific reserves of $1.2 billion against our CRE
+  portfolio, representing approximately 3.8% of total CRE exposure.
+
+LIQUIDITY RISK
+As a global systemically important bank (G-SIB), Goldman Sachs is subject to
+enhanced liquidity requirements under Basel III/IV and the Federal Reserve's
+Liquidity Coverage Ratio (LCR) and Net Stable Funding Ratio (NSFR) rules.
+
+  Our Liquidity Coverage Ratio as of December 31, 2023: 127%
+  (Minimum regulatory requirement: 100%)
+
+  Global Core Liquid Assets (GCLA): $422 billion
+  
+  GCLA composition:
+    U.S. Treasury Securities:          $189B (44.8%)
+    U.S. Agency Securities:             $87B (20.6%)
+    Non-US Sovereign Securities:        $72B (17.1%)
+    Cash at Central Banks:              $74B (17.5%)
+
+The March 2023 failures of Silicon Valley Bank and Signature Bank demonstrated
+the speed at which digital bank runs can materialize in an environment of social
+media-amplified depositor anxiety. While Goldman Sachs' funding base is
+institutionally diversified and thus less susceptible to retail deposit flight,
+we continue to monitor wholesale funding markets for signs of stress.
+
+--------------------------------------------------------------------------------
+OPERATIONAL AND TECHNOLOGY RISKS
+--------------------------------------------------------------------------------
+
+CYBERSECURITY RISK
+Financial institutions remain primary targets for sophisticated cyber attacks
+from nation-state actors, criminal organizations, and hacktivists. Our
+Cybersecurity Risk Framework governs threat detection, incident response,
+and business continuity.
+
+Significant cybersecurity developments in 2023 affecting the financial sector:
+  - MOVEit file transfer vulnerability (CVE-2023-34362): The Cl0p ransomware
+    group exploited this zero-day to steal data from hundreds of organizations
+    globally. Goldman Sachs confirmed that data from third-party vendor
+    PBI Research Services, used for pension benefit administration, was
+    potentially affected, impacting data associated with approximately
+    80,000 current and former employees and customers.
+  - Increased attacks on SWIFT interbank messaging infrastructure targeting
+    correspondent banking relationships
+  - AI-generated social engineering (deepfake voice fraud, AI-generated phishing)
+    represents an emerging threat vector requiring enhanced authentication
+
+We have invested $1.3 billion annually in cybersecurity, employing approximately
+1,900 dedicated cybersecurity professionals.
+
+CONDUCT AND LEGAL RISK
+The firm continues to face legal and regulatory proceedings in multiple
+jurisdictions:
+
+  1MDB Settlement Legacy: The $2.9 billion global settlement related to the
+  1Malaysia Development Berhad fraud (reached in 2020) continues to impose
+  compliance obligations, including ongoing monitoring by the US Department of
+  Justice, Federal Reserve, and regulators in Malaysia, Singapore, and the UK.
+  Our ability to pursue certain business activities in affected markets remains
+  restricted.
+
+  CFPB Inquiry (Marcus Consumer Lending): Following announced wind-down of
+  Marcus consumer personal loans and Apple Card partnership restructuring,
+  the Consumer Financial Protection Bureau initiated inquiry regarding loan
+  servicing practices and treatment of borrowers. We have cooperated fully
+  with this inquiry and do not expect material financial liability, but the
+  regulatory relationship warrants ongoing monitoring.
+
+  ESG Greenwashing Claims: The SEC's Division of Examinations has conducted
+  multiple inquiries into ESG disclosures across the asset management industry.
+  Goldman Sachs Asset Management reached a $4 million settlement with the SEC
+  in October 2022 related to ESG policies and procedures. We continue to
+  enhance our ESG data governance and disclosure practices.
+
+--------------------------------------------------------------------------------
+STRATEGIC AND BUSINESS RISKS
+--------------------------------------------------------------------------------
+
+CONSUMER BANKING STRATEGY EXIT
+In October 2023, Goldman Sachs announced the wind-down of its Marcus consumer
+banking platform, reversing a strategic initiative launched in 2016 that had
+consumed approximately $3-4 billion in cumulative investment and losses.
+
+The consumer banking venture failed to achieve scale for several reasons:
+  - Customer acquisition costs were high ($350-500 per account) relative to
+    the thin margins available in consumer banking
+  - Goldman's brand resonated poorly with mass-market consumers seeking a
+    full-service banking relationship
+  - Regulatory capital requirements for consumer lending are burdensome for
+    a firm historically optimized for institutional business
+  - The Apple Card partnership, while generating attractive card volume,
+    required Goldman to absorb disproportionate credit risk and servicing costs
+
+Goldman has agreed in principle to transfer the Apple Card partnership to a new
+issuer. The total pre-tax write-downs associated with the consumer strategy
+wind-down total approximately $3.0-3.5 billion over 2022-2023.
+
+INVESTMENT BANKING CYCLE DEPENDENCY
+Goldman Sachs' earnings are highly cyclical, with Investment Banking revenues
+representing approximately 15-20% of total revenue in normal environments.
+FY2023 Investment Banking revenue was $6.0 billion, down 59% from the FY2021
+peak of $14.7 billion. The recovery trajectory is dependent on:
+  - M&A activity returning as buyer-seller valuation gaps close
+  - IPO market reopening (2023 was the second-weakest IPO market since 2003)
+  - Private equity-backed exit transactions resuming as PE firms face LP
+    pressure to return capital
+
+ASSET & WEALTH MANAGEMENT PERFORMANCE
+Management targets $10 billion in annual fee-based Asset & Wealth Management
+revenues by 2025. Progress in 2023 was solid, with fee-based revenues of $7.8
+billion, but achieving the target requires:
+  - Sustained inflows into alternative investment strategies (private equity,
+    private credit, infrastructure, real estate)
+  - Harvesting unrealized gains in the on-balance-sheet investing portfolio
+    (which contributed to earnings volatility)
+  - Expanding the ultra-high-net-worth client base, particularly in Asia Pacific
+
+--------------------------------------------------------------------------------
+REGULATORY AND CAPITAL RISKS
+--------------------------------------------------------------------------------
+
+BASEL III ENDGAME
+The Federal Reserve's Basel III Endgame proposal (July 2023), if adopted as
+proposed, would require the largest US banks to hold approximately 19% more
+capital. Goldman Sachs would be among the most affected banks given its
+trading-intensive business model. We estimate that the full proposal would
+require an increase in our Common Equity Tier 1 (CET1) ratio target by
+approximately 3-4 percentage points.
+
+Current CET1 Ratio: 14.5% (as of December 31, 2023)
+Minimum Regulatory Requirement: 13.0% (including G-SIB surcharge)
+
+A final rule is expected in 2024-2025, with a multi-year implementation period.
+We anticipate the final rule will be revised to be less punitive than the
+initial proposal following extensive industry comment and Congressional scrutiny.
+
+================================================================================
+FINANCIAL SUMMARY — FY2023
+================================================================================
+
+  Net Revenue:                   $46.3B   (-2% YoY)
+  Provision for Credit Losses:    $1.2B
+  Operating Expenses:            $34.3B   (74.1% efficiency ratio)
+  Pre-Tax Earnings:              $10.8B
+  Net Earnings:                   $8.5B
+  EPS (Diluted):                 $22.87   (-26% YoY)
+  Return on Equity (ROE):          7.5%   (vs. ~15% target)
+  Book Value Per Share:          $313.84
+
+================================================================================
+This excerpt is for informational purposes. See the complete Goldman Sachs
+Form 10-K filed February 2024 with the SEC for full risk disclosures.
+================================================================================

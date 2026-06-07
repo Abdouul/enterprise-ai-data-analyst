@@ -1,0 +1,165 @@
+AMAZON.COM, INC.
+Q2 2024 EARNINGS RELEASE AND CFO COMMENTARY
+For the Three Months Ended June 30, 2024
+
+================================================================================
+FINANCIAL OVERVIEW
+================================================================================
+
+Amazon reported second-quarter 2024 results that significantly exceeded analyst
+expectations, driven by accelerating Amazon Web Services (AWS) revenue growth
+and continued North America segment margin expansion. Total net sales reached
+$148.0 billion, up 10% year-over-year (11% excluding foreign exchange impact).
+
+CFO Brian Olsavsky stated: "We're seeing strong demand signals across the
+business. AWS growth has reaccelerated, advertising continues to outperform,
+and we're making meaningful progress on cost-to-serve reductions within our
+fulfillment network."
+
+================================================================================
+SEGMENT RESULTS (Q2 2024)
+================================================================================
+
+NORTH AMERICA SEGMENT:
+  Net Sales:                     $90.0B    (+9% YoY)
+  Operating Income:               $5.1B    (5.7% operating margin)
+    vs. prior year operating margin of 3.9% — a 180bps improvement
+
+  Drivers of margin expansion:
+    - Regionalization of fulfillment network reduced average cost-to-serve by
+      approximately $0.45 per unit delivered
+    - Reduced air freight reliance following post-COVID inventory normalization
+    - Lower fuel costs vs. peak 2022 levels
+    - Advertising revenue attached to product listings (high-margin)
+
+INTERNATIONAL SEGMENT:
+  Net Sales:                     $31.7B   (+10% YoY, +13% ex-FX)
+  Operating Income:               $0.3B    (first-ever positive operating income
+                                           for two consecutive quarters)
+
+  Key markets:
+    - UK: Consistently profitable, growing in logistics and Prime Video
+    - Germany: Returned to profitability in Q1 2024 after labor cost pressures
+    - Japan: Stable profitability; subscription revenue growing
+    - Emerging markets (India, Brazil, Middle East): Still loss-making but
+      narrowing losses as infrastructure investment matures
+
+AMAZON WEB SERVICES (AWS):
+  Net Sales:                     $26.3B   (+19% YoY)
+  Operating Income:               $9.3B   (35.5% operating margin)
+
+  AWS is now growing at its fastest pace since Q3 2022, driven by:
+    1. Enterprise AI workloads: Companies migrating from exploratory AI pilots
+       to production-scale deployments, requiring GPU compute and managed
+       AI services (Amazon Bedrock, SageMaker).
+    2. Optimization cycle completion: The "optimization headwind" of 2022-2023,
+       when enterprises aggressively right-sized cloud spend, has substantially
+       unwound. Committed spend drawdowns are declining.
+    3. New product attach: AWS has expanded from ~230 services to over 240,
+       with new AI-native services including Bedrock (generative AI API), Q
+       (AI coding assistant), and Trainium/Inferentia custom chips.
+
+================================================================================
+AWS AI PLATFORM: AMAZON BEDROCK
+================================================================================
+
+Amazon Bedrock is AWS's fully managed generative AI service, allowing enterprises
+to build AI applications using foundation models from Amazon, Anthropic, Meta,
+Mistral, Cohere, and others — without managing underlying infrastructure.
+
+Key Bedrock capabilities:
+  - Model access: Amazon Titan, Claude 3 (Anthropic), Llama 3 (Meta), Command
+    (Cohere), Mistral models
+  - Knowledge Bases: Native RAG (Retrieval-Augmented Generation) with vector
+    store integration (OpenSearch Serverless, Aurora PostgreSQL, Pinecone)
+  - Agents: Multi-step autonomous agents that can call APIs, query databases,
+    and execute business logic
+  - Guardrails: Content filtering, PII detection, topic blocking
+  - Model Evaluation: Automated benchmarking of fine-tuned vs. base models
+
+Bedrock crossed 100,000 active customers in Q2 2024, though average revenue
+per customer remains modest as organizations are in early production phases.
+
+AWS custom silicon strategy:
+  - Trainium2 (training): Second-generation ML training chip offering 4x
+    throughput improvement over Trainium1; used by Amazon internally and
+    offered to select enterprise customers
+  - Inferentia2 (inference): Optimized for low-latency, high-throughput
+    inference at scale; priced 40-50% below equivalent NVIDIA-based instances
+  - Graviton4 (general compute): ARM-based CPU for web, database, and analytics
+    workloads; offers 30% better price-performance vs. x86 alternatives
+
+================================================================================
+ADVERTISING BUSINESS
+================================================================================
+
+Amazon Advertising is now the company's highest-margin revenue stream on a
+standalone basis, generating approximately $14.7B in Q2 2024, up 19% YoY.
+
+The advertising product suite includes:
+  - Sponsored Products / Brands / Display: Search and browse ads on Amazon.com
+  - Streaming TV ads: DSP targeting against Prime Video and Freevee inventory
+    (Prime Video ads launched January 2024, representing a significant new
+    inventory source)
+  - Amazon DSP: Programmatic display and video advertising across the web
+
+Prime Video Ad-Supported Tier: Amazon's decision to insert advertising into
+Prime Video (previously ad-free) for all subscribers unless they pay $2.99/month
+to opt out is expected to generate $3-5 billion in incremental annual ad revenue
+at scale. Initial CPMs (cost per thousand impressions) for Prime Video ads are
+reported at $30-35, premium to most streaming competitors, due to Amazon's
+first-party purchase data enabling superior audience targeting.
+
+================================================================================
+FULFILLMENT NETWORK AND LOGISTICS
+================================================================================
+
+SAME-DAY DELIVERY EXPANSION:
+  Amazon operates 55 same-day delivery facilities in the US, enabling delivery
+  within hours for millions of Prime members in major metropolitan areas. The
+  company plans to double this count by end of 2025, supporting its strategy
+  to offer same-day delivery to 50% of the US population.
+
+LAST-MILE DELIVERY:
+  Amazon Logistics (AMZL) now delivers approximately 72% of Amazon's US volume,
+  with the remainder handled by UPS, USPS, and FedEx. The company's delivery
+  service partner (DSP) network comprises over 3,000 small businesses employing
+  200,000+ drivers. This in-house logistics network is now serving third parties
+  through Amazon Shipping, directly competing with UPS and FedEx.
+
+ROBOTICS:
+  Amazon has deployed over 750,000 robots across its fulfillment network,
+  including Proteus (autonomous mobile robot), Cardinal (AI-powered sortation
+  arm), and Sparrow (item-picking robot). These systems are improving throughput
+  and reducing repetitive-strain injuries but have also contributed to workforce
+  reduction discussions.
+
+================================================================================
+RISKS AND CHALLENGES
+================================================================================
+
+1. Labor relations: Amazon faces ongoing unionization efforts following the
+   Amazon Labor Union's landmark 2022 victory at JFK8. A second union drive
+   at the Coventry, UK warehouse resulted in a union victory in 2024.
+2. Antitrust: FTC lawsuit (filed September 2023) alleges Amazon maintains an
+   illegal monopoly over online marketplace services, seeking potential
+   structural remedies including divestiture of certain marketplace or logistics
+   assets.
+3. AWS competition: Microsoft Azure and Google Cloud are investing aggressively
+   in AI infrastructure and competing on enterprise relationships.
+4. International profitability: Emerging market operations require continued
+   investment with uncertain payback timelines.
+5. AI infrastructure capital: $30B+ annual capex commitment to AI data centers
+   requires sustained demand to generate acceptable returns on investment.
+
+================================================================================
+GUIDANCE — Q3 2024
+================================================================================
+
+  Net Sales:                     $154-158.5B   (+8-11% YoY)
+  Operating Income:               $11.5-15.0B  (midpoint implies ~$13B)
+
+The wide range reflects uncertainty around Prime Video advertising revenue ramp
+and AWS demand acceleration pace.
+
+================================================================================

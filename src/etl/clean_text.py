@@ -6,12 +6,37 @@ import re
 from pathlib import Path
 
 
-WHITESPACE_RE = re.compile(r"\s+")
+LINE_SPACE_RE = re.compile(r"[ \t]+")
+BLANK_LINES_RE = re.compile(r"\n{3,}")
+MOJIBAKE_REPLACEMENTS = {
+    "â€”": "-",
+    "â€“": "-",
+    "â€˜": "'",
+    "â€™": "'",
+    "â€œ": '"',
+    "â€": '"',
+    "â€": '"',
+    "Â": "",
+}
+
+
+def repair_mojibake(text: str) -> str:
+    if "â" not in text and "Â" not in text:
+        return text
+    try:
+        return text.encode("cp1252").decode("utf-8")
+    except UnicodeError:
+        return text
 
 
 def normalize_text(text: str) -> str:
-    text = text.replace("\x00", " ")
-    text = WHITESPACE_RE.sub(" ", text)
+    text = text.replace("\x00", " ").replace("\r\n", "\n").replace("\r", "\n")
+    text = repair_mojibake(text)
+    for broken, replacement in MOJIBAKE_REPLACEMENTS.items():
+        text = text.replace(broken, replacement)
+    lines = [LINE_SPACE_RE.sub(" ", line).strip() for line in text.split("\n")]
+    text = "\n".join(lines)
+    text = BLANK_LINES_RE.sub("\n\n", text)
     return text.strip()
 
 
@@ -23,13 +48,18 @@ def clean_jsonl(input_file: Path, output_file: Path) -> int:
             document = json.loads(line)
             for page in document.get("pages", []):
                 page["text"] = normalize_text(page.get("text", ""))
+            document["cleaning"] = {
+                "normalized_whitespace": True,
+                "removed_null_bytes": True,
+                "repaired_common_mojibake": True,
+            }
             target.write(json.dumps(document, ensure_ascii=False) + "\n")
             count += 1
     return count
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Clean parsed PDF JSONL text.")
+    parser = argparse.ArgumentParser(description="Clean parsed document JSONL text.")
     parser.add_argument("--input", default="data/cleaned/parsed.jsonl", type=Path)
     parser.add_argument("--output", default="data/cleaned/cleaned.jsonl", type=Path)
     args = parser.parse_args()

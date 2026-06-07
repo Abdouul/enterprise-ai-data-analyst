@@ -1,0 +1,169 @@
+NVIDIA CORPORATION
+FISCAL Q1 2025 EARNINGS TRANSCRIPT (CONDENSED)
+For the Quarter Ended April 28, 2024
+
+================================================================================
+PREPARED REMARKS — CEO JENSEN HUANG
+================================================================================
+
+"This was another exceptional quarter. Demand for NVIDIA's AI infrastructure
+has broadened from large cloud service providers to enterprises, national AI
+initiatives, and sovereign governments. We are no longer selling chips — we
+are selling AI factories.
+
+The Hopper GPU architecture (H100, H200) remains capacity-constrained, and we
+are working closely with our supply partners TSMC, CoWoS advanced packaging
+suppliers, and memory manufacturers to expand supply as rapidly as possible.
+Blackwell, our next-generation architecture, is on track for production ramp
+beginning in Q3 FY2025 and will represent the largest new product cycle in our
+company's history.
+
+The transition from general-purpose computing to accelerated computing is
+fundamentally reshaping data center economics. Every dollar spent on NVIDIA GPUs
+generates returns in the form of reduced inference costs, faster model training,
+and new revenue opportunities from AI-powered products. We estimate that the
+world's installed base of data center compute will be entirely replaced over
+the next four to five years with accelerated computing infrastructure."
+
+================================================================================
+Q1 FY2025 FINANCIAL RESULTS
+================================================================================
+
+REVENUE (in millions USD):
+  Data Center:              $22,604    (+427% YoY, +23% QoQ)
+  Gaming:                    $2,647    (+18% YoY,  -8% QoQ)
+  Professional Visualization: $427    (+45% YoY, +7% QoQ)
+  Automotive:                  $329    (+11% YoY, +17% QoQ)
+  OEM & Other:                 $115    (-6% YoY)
+  TOTAL REVENUE:            $26,044    (+262% YoY, +18% QoQ)
+
+PROFITABILITY:
+  Gross Margin (GAAP):       78.4%   (record high; up from 64.6% in Q1 FY2024)
+  Operating Income:         $16.9B   (64.9% of revenue)
+  Net Income:               $14.9B   (57.1% of revenue)
+  Diluted EPS (GAAP):        $5.98   (+629% YoY)
+  Free Cash Flow:           $14.9B
+
+BALANCE SHEET:
+  Cash & Short-Term Investments:  $31.4B
+  Total Debt:                      $8.5B
+  Net Cash Position:              $22.9B
+
+SHAREHOLDER RETURNS (Q1 FY2025):
+  Share Repurchases:          $7.7B
+  Dividends:                  $0.98B
+  Announced 10-for-1 stock split effective June 10, 2024
+
+================================================================================
+DATA CENTER SEGMENT: DEEP ANALYSIS
+================================================================================
+
+The Data Center segment — comprising compute GPUs, networking (InfiniBand,
+Ethernet), and DGX systems — is now the overwhelming driver of NVIDIA's business,
+representing 87% of total revenue.
+
+H100 / H200 GPU DEMAND DRIVERS:
+  1. Foundation model training: Training frontier models (GPT-4 class and above)
+     requires clusters of 10,000-100,000 H100s running for weeks to months.
+     The top 5 foundation model companies (OpenAI, Anthropic, Google DeepMind,
+     Meta AI, xAI) each operate or are building GPU clusters of 50,000+ units.
+
+  2. Inference infrastructure: Serving AI models at scale requires massive
+     inference compute. ChatGPT alone is estimated to process over 10 million
+     queries per day, each requiring substantial GPU cycles.
+
+  3. Sovereign AI: National governments are building domestically controlled
+     AI infrastructure. Countries that have announced national AI computing
+     initiatives include France (Mistral/GENCI), UAE (G42), Saudi Arabia
+     (SDAIA), India (IndiaAI), Japan (AIST), and over 20 others. These
+     sovereign customers are less price-sensitive than commercial hyperscalers.
+
+  4. Enterprise AI: Fortune 500 companies deploying RAG systems, document
+     intelligence, AI-powered customer service, and code generation are
+     beginning to acquire direct GPU infrastructure rather than relying
+     exclusively on cloud rental.
+
+NVIDIA NETWORKING (FORMERLY MELLANOX):
+  InfiniBand high-speed networking is a critical complement to GPU compute.
+  GPU clusters of 10,000+ units require ultra-low-latency, high-bandwidth
+  interconnects to distribute model weights and synchronize gradient updates
+  across thousands of parallel training processes. NVIDIA's InfiniBand holds
+  an estimated 80% share of high-performance AI interconnect.
+
+  Ethernet for AI (Spectrum-X): NVIDIA is adapting standard Ethernet for AI
+  workloads as an alternative to InfiniBand for inference-heavy deployments,
+  expanding the addressable market to organizations unwilling to adopt
+  proprietary InfiniBand ecosystems.
+
+BLACKWELL ARCHITECTURE (B100/B200, GB200):
+  Blackwell is NVIDIA's next-generation GPU platform, manufactured on TSMC's
+  4NP process with custom packaging involving two dies connected via a 10TB/s
+  NVLink chip-to-chip interconnect.
+
+  Performance improvements vs. H100:
+    - Training throughput: 2.5x improvement
+    - Inference throughput: 5x improvement (critical for cost reduction)
+    - Memory bandwidth: 8TB/s HBM3e (vs. 3.35TB/s on H100)
+    - Power consumption per GPU: ~1000W TDP (requiring new rack power designs)
+
+  The GB200 NVL72 system (a rack-scale supercomputer) combines 36 Grace CPUs
+  with 72 Blackwell GPUs, interconnected via NVLink Switch, consuming up to
+  120kW per rack. This represents a 10x increase in rack power density versus
+  traditional servers, creating significant challenges for data center operators
+  regarding power delivery and cooling.
+
+================================================================================
+SUPPLY CHAIN CONSTRAINTS
+================================================================================
+
+TSMC COWOS PACKAGING:
+  H100 and H200 GPUs require CoWoS (Chip-on-Wafer-on-Substrate) advanced
+  packaging, which integrates the GPU die with HBM memory stacks. TSMC's CoWoS
+  capacity has been the primary bottleneck in NVIDIA's ability to supply demand.
+  TSMC is investing heavily to double CoWoS capacity by end of 2024, but
+  allocation remains highly constrained and is rationed among customers including
+  AMD, Broadcom, and NVIDIA.
+
+HBM MEMORY:
+  High Bandwidth Memory (HBM3/HBM3e) is supplied by SK Hynix, Samsung, and
+  Micron. SK Hynix supplies the majority of HBM for H100/H200 GPUs. HBM supply
+  is expected to remain tight through 2025 due to the specialized process
+  required to manufacture and stack memory dies.
+
+SUPPLY CONCENTRATION RISK:
+  Approximately 90% of NVIDIA's advanced GPU manufacturing is concentrated at
+  TSMC's Taiwan fabs. Geopolitical risk related to Taiwan remains the most
+  significant single supply chain vulnerability. NVIDIA has begun qualifying
+  Samsung as an alternative foundry for less critical components, but advanced
+  GPU dies are unlikely to be dual-sourced in the near term.
+
+================================================================================
+EXPORT CONTROLS AND GEOPOLITICAL RISK
+================================================================================
+
+The US Bureau of Industry and Security (BIS) has imposed successive rounds of
+export controls restricting the sale of advanced AI chips to China:
+
+  October 2022: A100 (equivalent) and H100 restricted; A800/H800 created
+  October 2023: A800/H800 also restricted; L20/L40S variants created
+  Ongoing: BIS developing performance-based thresholds to close loopholes
+
+China represented approximately 17% of NVIDIA's data center revenue in FY2023.
+By Q1 FY2025, this share had declined to an estimated 5-10%, replaced by
+demand from US hyperscalers, Middle East sovereign AI, and European enterprises.
+The company is developing an H20 chip specifically designed to comply with
+current export control thresholds, but its performance is significantly below
+H100, limiting adoption for frontier model training.
+
+================================================================================
+GUIDANCE — Q2 FY2025
+================================================================================
+
+  Revenue:         $28.0B ± 2%   (implies ~$27.4-28.6B)
+  Gross Margin:    ~78.5% (GAAP), ~78.8% (Non-GAAP)
+  Operating Expenses:  ~$4.0B (GAAP), ~$3.0B (Non-GAAP)
+
+The guidance reflects continued Hopper demand while Blackwell production ramps,
+with Blackwell expected to contribute meaningfully to revenue beginning Q3 FY2025.
+
+================================================================================

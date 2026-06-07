@@ -15,10 +15,16 @@ DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 def point_id(chunk_id: str) -> str:
+    """Create a deterministic UUID for a chunk ID.
+
+    Deterministic IDs make repeated ingestion predictable: the same chunk gets
+    the same Qdrant point ID each time the pipeline runs.
+    """
     return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
 
 
 def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name: str = DEFAULT_MODEL, batch_size: int = 64) -> int:
+    """Embed cleaned chunks with a local HuggingFace model and upsert to Qdrant."""
     model = SentenceTransformer(model_name)
     client = QdrantClient(url=qdrant_url)
     vector_size = model.get_sentence_embedding_dimension()
@@ -48,6 +54,7 @@ def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name
 
 
 def main() -> None:
+    """Expose vector ingestion as a command-line script."""
     parser = argparse.ArgumentParser(description="Embed chunks and ingest them into Qdrant.")
     parser.add_argument("--input", default="data/cleaned/chunks.jsonl", type=Path)
     parser.add_argument("--collection", default=os.getenv("QDRANT_COLLECTION", "finance_docs"))

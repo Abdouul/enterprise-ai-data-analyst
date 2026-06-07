@@ -19,6 +19,11 @@ COMPANY_ALIASES = {
 
 
 def infer_metadata(path: Path, text: str = "") -> dict[str, object]:
+    """Infer structured metadata from the file name and document preview.
+
+    Qdrant stores this metadata with every vector so the analyst can filter or
+    cite results by company, year, period, document type, and source file.
+    """
     stem = path.stem.lower()
     searchable = f"{stem}\n{text[:1000]}".lower()
 

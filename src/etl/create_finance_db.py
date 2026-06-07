@@ -90,6 +90,13 @@ FINANCIAL_ROWS = [
 
 
 def create_finance_db(db_path: Path) -> int:
+    """Create the local SQLite database used for structured financial questions.
+
+    The agent will later use this table when a user asks for numeric facts such
+    as revenue, net income, year, report type, or industry. The function drops
+    and recreates the table so the database is reproducible every time Phase 1
+    runs.
+    """
     db_path.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(db_path) as connection:
         connection.execute("DROP TABLE IF EXISTS financials")
@@ -131,6 +138,7 @@ def create_finance_db(db_path: Path) -> int:
 
 
 def main() -> None:
+    """Expose database creation as a command-line script."""
     parser = argparse.ArgumentParser(description="Create the SQLite finance database used by the SQL agent.")
     parser.add_argument("--db-path", default="data/finance.db", type=Path)
     args = parser.parse_args()

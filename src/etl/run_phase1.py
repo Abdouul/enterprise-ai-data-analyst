@@ -22,6 +22,12 @@ def run_pipeline(
     model: str,
     db_path: Path,
 ) -> dict[str, object]:
+    """Run the full Phase 1 data preparation workflow.
+
+    This function coordinates the structured SQL side and the unstructured
+    vector side: it creates the finance database, parses raw documents, cleans
+    them, chunks them semantically, and optionally ingests vectors into Qdrant.
+    """
     parsed_path = output_dir / "parsed.jsonl"
     cleaned_path = output_dir / "cleaned.jsonl"
     chunks_path = output_dir / "chunks.jsonl"
@@ -49,6 +55,7 @@ def run_pipeline(
 
 
 def main() -> None:
+    """Read command-line arguments and launch the Phase 1 pipeline."""
     parser = argparse.ArgumentParser(description="Run Phase 1 Vector ETL pipeline end to end.")
     parser.add_argument("--input", default="data/raw_txts", type=Path)
     parser.add_argument("--output", default="data/cleaned", type=Path)

@@ -11,11 +11,18 @@ SUPPORTED_EXTENSIONS = {".pdf", ".txt", ".md"}
 
 
 def parse_txt(path: Path) -> dict[str, object]:
+    """Read a text/Markdown document and attach inferred metadata.
+
+    Text files do not have real pages, so the whole file is stored as page 1.
+    The output shape matches PDF parsing so later ETL steps can treat both
+    formats the same way.
+    """
     text = path.read_text(encoding="utf-8", errors="replace")
     return {"source": str(path), "pages": [{"page": 1, "text": text}], "metadata": infer_metadata(path, text)}
 
 
 def parse_pdf(path: Path) -> dict[str, object]:
+    """Extract page text from a PDF and attach inferred document metadata."""
     from pypdf import PdfReader
 
     reader = PdfReader(str(path))
@@ -30,6 +37,7 @@ def parse_pdf(path: Path) -> dict[str, object]:
 
 
 def parse_document(path: Path) -> dict[str, object]:
+    """Route one raw document to the correct parser based on its extension."""
     if path.suffix.lower() == ".pdf":
         return parse_pdf(path)
     if path.suffix.lower() in {".txt", ".md"}:
@@ -38,6 +46,11 @@ def parse_document(path: Path) -> dict[str, object]:
 
 
 def parse_directory(input_dir: Path, output_file: Path) -> int:
+    """Parse every supported raw document in a folder into one JSONL file.
+
+    JSONL is used because each line is one complete document record. That makes
+    the pipeline easy to stream and inspect without loading everything at once.
+    """
     output_file.parent.mkdir(parents=True, exist_ok=True)
     document_paths = sorted(path for path in input_dir.iterdir() if path.suffix.lower() in SUPPORTED_EXTENSIONS)
 
@@ -48,6 +61,7 @@ def parse_directory(input_dir: Path, output_file: Path) -> int:
 
 
 def main() -> None:
+    """Expose document parsing as a command-line script."""
     parser = argparse.ArgumentParser(description="Parse raw enterprise documents into JSONL.")
     parser.add_argument("--input", default="data/raw_txts", type=Path)
     parser.add_argument("--output", default="data/cleaned/parsed.jsonl", type=Path)

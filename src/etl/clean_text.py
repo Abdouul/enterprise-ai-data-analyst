@@ -21,6 +21,7 @@ MOJIBAKE_REPLACEMENTS = {
 
 
 def repair_mojibake(text: str) -> str:
+    """Repair common broken UTF-8 text when files were decoded incorrectly."""
     if "â" not in text and "Â" not in text:
         return text
     try:
@@ -30,6 +31,12 @@ def repair_mojibake(text: str) -> str:
 
 
 def normalize_text(text: str) -> str:
+    """Normalize one text block before chunking and embedding.
+
+    Clean text improves retrieval quality: embeddings are more stable when null
+    bytes, inconsistent line endings, excessive whitespace, and broken symbols
+    are removed before vectorization.
+    """
     text = text.replace("\x00", " ").replace("\r\n", "\n").replace("\r", "\n")
     text = repair_mojibake(text)
     for broken, replacement in MOJIBAKE_REPLACEMENTS.items():
@@ -41,6 +48,7 @@ def normalize_text(text: str) -> str:
 
 
 def clean_jsonl(input_file: Path, output_file: Path) -> int:
+    """Clean every parsed document in a JSONL file and write cleaned JSONL."""
     output_file.parent.mkdir(parents=True, exist_ok=True)
     count = 0
     with input_file.open("r", encoding="utf-8") as source, output_file.open("w", encoding="utf-8") as target:
@@ -59,6 +67,7 @@ def clean_jsonl(input_file: Path, output_file: Path) -> int:
 
 
 def main() -> None:
+    """Expose text cleaning as a command-line script."""
     parser = argparse.ArgumentParser(description="Clean parsed document JSONL text.")
     parser.add_argument("--input", default="data/cleaned/parsed.jsonl", type=Path)
     parser.add_argument("--output", default="data/cleaned/cleaned.jsonl", type=Path)

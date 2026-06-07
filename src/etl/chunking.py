@@ -10,10 +10,17 @@ HEADING_RE = re.compile(r"^[A-Z0-9][A-Z0-9 &().,/'':\-–—]{6,}$")
 
 
 def word_count(text: str) -> int:
+    """Count words in a text block for chunk sizing."""
     return len(re.findall(r"\S+", text))
 
 
 def sectionize(text: str) -> list[dict[str, str]]:
+    """Split a document into semantic sections using heading-like lines.
+
+    This is more useful than blind fixed-size splitting because each chunk keeps
+    nearby business context such as "Risks", "Revenue By Segment", or
+    "Prepared Remarks".
+    """
     sections: list[dict[str, str]] = []
     current_title = "Document Overview"
     current_lines: list[str] = []
@@ -42,6 +49,11 @@ def sectionize(text: str) -> list[dict[str, str]]:
 
 
 def chunk_section(section_text: str, max_words: int = 220, overlap_sentences: int = 1) -> list[str]:
+    """Group section paragraphs into retrieval-sized chunks.
+
+    The overlap keeps a small amount of context from the previous chunk so the
+    vector search does not lose meaning at chunk boundaries.
+    """
     paragraphs = [paragraph.strip() for paragraph in re.split(r"\n\s*\n", section_text) if paragraph.strip()]
     chunks = []
     current: list[str] = []
@@ -64,6 +76,7 @@ def chunk_section(section_text: str, max_words: int = 220, overlap_sentences: in
 
 
 def build_chunks(input_file: Path, output_file: Path, max_words: int, overlap_sentences: int) -> int:
+    """Create chunk records with text plus metadata ready for Qdrant ingestion."""
     output_file.parent.mkdir(parents=True, exist_ok=True)
     count = 0
     with input_file.open("r", encoding="utf-8") as source, output_file.open("w", encoding="utf-8") as target:
@@ -100,6 +113,7 @@ def build_chunks(input_file: Path, output_file: Path, max_words: int, overlap_se
 
 
 def main() -> None:
+    """Expose semantic chunking as a command-line script."""
     parser = argparse.ArgumentParser(description="Split cleaned document pages into chunks.")
     parser.add_argument("--input", default="data/cleaned/cleaned.jsonl", type=Path)
     parser.add_argument("--output", default="data/cleaned/chunks.jsonl", type=Path)

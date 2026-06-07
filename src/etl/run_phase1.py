@@ -6,6 +6,7 @@ from pathlib import Path
 
 from src.etl.chunking import build_chunks
 from src.etl.clean_text import clean_jsonl
+from src.etl.create_finance_db import create_finance_db
 from src.etl.parse_documents import parse_directory
 
 
@@ -19,11 +20,13 @@ def run_pipeline(
     qdrant_url: str,
     collection: str,
     model: str,
+    db_path: Path,
 ) -> dict[str, object]:
     parsed_path = output_dir / "parsed.jsonl"
     cleaned_path = output_dir / "cleaned.jsonl"
     chunks_path = output_dir / "chunks.jsonl"
 
+    financial_rows = create_finance_db(db_path)
     parsed_count = parse_directory(input_dir, parsed_path)
     cleaned_count = clean_jsonl(parsed_path, cleaned_path)
     chunk_count = build_chunks(cleaned_path, chunks_path, max_words=220, overlap_sentences=1)
@@ -34,6 +37,8 @@ def run_pipeline(
         ingested_count = ingest_chunks(chunks_path, collection, qdrant_url, model)
 
     return {
+        "financial_rows": financial_rows,
+        "finance_db_path": str(db_path),
         "parsed_documents": parsed_count,
         "cleaned_documents": cleaned_count,
         "chunks": chunk_count,
@@ -51,9 +56,10 @@ def main() -> None:
     parser.add_argument("--qdrant-url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
     parser.add_argument("--collection", default=os.getenv("QDRANT_COLLECTION", "finance_docs"))
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--db-path", default=os.getenv("FINANCE_DB_PATH", "data/finance.db"), type=Path)
     args = parser.parse_args()
 
-    result = run_pipeline(args.input, args.output, args.ingest, args.qdrant_url, args.collection, args.model)
+    result = run_pipeline(args.input, args.output, args.ingest, args.qdrant_url, args.collection, args.model, args.db_path)
     for key, value in result.items():
         print(f"{key}: {value}")
 

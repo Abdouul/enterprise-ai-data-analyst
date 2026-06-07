@@ -7,12 +7,13 @@ Construire un analyste IA d'entreprise capable d'extraire des informations depui
 ## Architecture
 
 1. Dataset Phase 1: 10 documents financiers texte dans `data/raw_txts/`.
-2. Parsing `.txt` et `.pdf` avec extraction de metadata.
-3. Nettoyage texte, normalisation et correction de mojibake courant.
-4. Decoupage semantique par sections et paragraphes, pas par taille fixe brute.
-5. Ingestion dans Qdrant avec embeddings Sentence Transformers `all-MiniLM-L6-v2`.
-5. Reponse via outils SQL et vectoriels exposes a l'agent.
-6. Evaluation optionnelle avec RAGAS.
+2. Creation de `data/finance.db` avec la table relationnelle `financials`.
+3. Parsing `.txt` et `.pdf` avec extraction de metadata.
+4. Nettoyage texte, normalisation et correction de mojibake courant.
+5. Decoupage semantique par sections et paragraphes, pas par taille fixe brute.
+6. Ingestion dans Qdrant avec embeddings Sentence Transformers `all-MiniLM-L6-v2`.
+7. Reponse via outils SQL et vectoriels exposes a l'agent.
+8. Evaluation optionnelle avec RAGAS.
 
 ## Phase 1 - Conformite
 
@@ -22,6 +23,7 @@ Construire un analyste IA d'entreprise capable d'extraire des informations depui
 - Embeddings locaux: `sentence-transformers/all-MiniLM-L6-v2`.
 - Vector DB dockerisee: service Qdrant dans `docker-compose.yml`.
 - Metadata JSON par vecteur: `company_name`, `document_year`, `document_period`, `document_type`, `section_title`, `page`, `source_file`.
+- SQL: `src/etl/create_finance_db.py` recree `data/finance.db` avec `financials(company_name, year, revenue_billion_usd, net_income_billion_usd, report_type, industry)`.
 
 ## Prochaines etapes
 

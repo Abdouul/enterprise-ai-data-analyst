@@ -31,6 +31,7 @@ docker compose up -d qdrant
 Le dataset contient 10 documents financiers d'entreprise dans `data/raw_txts/`. Chaque chunk recoit un payload JSON avec au minimum `company_name`, `document_year`, `document_period`, `document_type`, `section_title`, `page` et `source_file`.
 
 ```bash
+python -m src.etl.create_finance_db --db-path data/finance.db
 python -m src.etl.parse_documents --input data/raw_txts --output data/cleaned/parsed.jsonl
 python -m src.etl.clean_text --input data/cleaned/parsed.jsonl --output data/cleaned/cleaned.jsonl
 python -m src.etl.chunking --input data/cleaned/cleaned.jsonl --output data/cleaned/chunks.jsonl
@@ -41,6 +42,8 @@ Pipeline complet sans ingestion:
 ```bash
 python -m src.etl.run_phase1
 ```
+
+Cette commande recree aussi `data/finance.db` avec la table SQL `financials`.
 
 Pipeline complet avec Qdrant et embeddings HuggingFace locaux:
 

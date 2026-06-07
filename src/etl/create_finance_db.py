@@ -99,6 +99,7 @@ def create_finance_db(db_path: Path) -> int:
     """
     db_path.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(db_path) as connection:
+        connection.execute("DROP TABLE IF EXISTS financial_metrics")
         connection.execute("DROP TABLE IF EXISTS financials")
         connection.execute(
             """

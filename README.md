@@ -70,3 +70,13 @@ curl -X POST "http://localhost:8000/ask" -H "Content-Type: application/json" -d 
 - `QDRANT_URL`: URL Qdrant, par defaut `http://localhost:6333`.
 - `QDRANT_COLLECTION`: collection Qdrant, par defaut `finance_docs`.
 - `FINANCE_DB_PATH`: chemin SQLite, par defaut `data/finance.db`.
+
+## Phase 2 - Agent LangGraph
+
+La couche agent est dans `src/agent/`.
+
+- `execute_sql`: outil SQL read-only sur `data/finance.db`, avec retour d'erreur et schema pour permettre la correction par l'agent.
+- `search_vector_db`: outil Qdrant qui extrait d'abord des filtres metadata stricts avec Pydantic/Instructor.
+- `graph.py`: construit le ReAct agent LangGraph avec ces deux outils.
+
+Pour lancer le vrai agent ReAct, configure `OPENAI_API_KEY`. Sans cle, l'API garde un fallback de recherche vectorielle simple.

@@ -43,27 +43,28 @@ COMPANY_PATTERNS = {
 
 
 def extract_filters_with_instructor(query: str) -> VectorSearchFilters | None:
-    """Use Instructor when credentials are available to extract strict filters."""
-    if not os.getenv("OPENAI_API_KEY"):
+    """Use a lite Gemini model to extract strict filters when GCP_API_KEY is set."""
+    api_key = os.getenv("GCP_API_KEY")
+    if not api_key:
         return None
     try:
-        import instructor
-        from openai import OpenAI
+        from langchain_google_genai import ChatGoogleGenerativeAI
     except ImportError:
         return None
 
-    client = instructor.from_openai(OpenAI())
-    return client.chat.completions.create(
-        model=os.getenv("FILTER_EXTRACTION_MODEL", "gpt-4o-mini"),
-        response_model=VectorSearchFilters,
-        messages=[
-            {
-                "role": "system",
-                "content": "Extract only explicit metadata filters from the user query. Leave unknown fields null.",
-            },
-            {"role": "user", "content": query},
-        ],
-    )
+    try:
+        llm = ChatGoogleGenerativeAI(
+            model=os.getenv("FILTER_EXTRACTION_MODEL", "gemini-2.0-flash-lite"),
+            google_api_key=api_key,
+            temperature=0,
+        )
+        structured = llm.with_structured_output(VectorSearchFilters)
+        return structured.invoke(
+            "Extract only explicit metadata filters from the user query. "
+            "Leave unknown fields null.\n\nQuery: " + query
+        )
+    except Exception:
+        return None
 
 
 def extract_filters_heuristic(query: str) -> VectorSearchFilters:

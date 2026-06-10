@@ -7,7 +7,7 @@ from typing import TypedDict
 from dotenv import load_dotenv
 
 
-GEMINI_TOOL_MODEL_FALLBACK = "gemini-1.5-flash"
+GEMINI_TOOL_MODEL_FALLBACK = "gemini-2.5-flash"
 
 
 class AnalystState(TypedDict):
@@ -78,7 +78,7 @@ def select_gemini_tool_model() -> str:
     """Select a Gemini model compatible with LangGraph tool calling."""
     requested_model = os.getenv("AGENT_MODEL", GEMINI_TOOL_MODEL_FALLBACK).strip()
     model_lower = requested_model.lower()
-    if model_lower.startswith("gemini-3") or model_lower.startswith("gemini-2.5"):
+    if model_lower.startswith("gemini-3"):
         print(
             f"[agent.graph] {requested_model} requires thought signatures for tool calls; "
             f"using {GEMINI_TOOL_MODEL_FALLBACK} for LangGraph ReAct tools."

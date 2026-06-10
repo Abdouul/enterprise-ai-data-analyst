@@ -38,6 +38,25 @@ Use search_vector_db for qualitative evidence from financial reports and
 earnings transcripts. For mixed questions, use both tools and cite the evidence
 you used. If execute_sql returns an error, inspect the schema in the tool output
 and try a corrected SELECT query.
+
+The financials table has these columns:
+company_name TEXT, year INTEGER, revenue_billion_usd REAL,
+net_income_billion_usd REAL, report_type TEXT, industry TEXT.
+
+SQL rules:
+- company_name is stored as the full legal name (e.g. 'Apple Inc.',
+  'Microsoft Corporation', 'Tesla, Inc.'). NEVER filter with an exact short
+  name like company_name = 'Apple'. ALWAYS match partially and
+  case-insensitively, e.g. WHERE LOWER(company_name) LIKE '%apple%'.
+- Revenue and net income are expressed in billions of USD
+  (columns revenue_billion_usd and net_income_billion_usd).
+- If a query returns 0 rows, broaden the filter (drop the year or use LIKE)
+  and try again before giving up.
+
+ALWAYS finish with a clear, written natural-language answer that synthesizes
+the numbers from execute_sql and the qualitative evidence from
+search_vector_db. Never end your turn with an empty message: if a tool returned
+no data, say so explicitly and answer with whatever evidence you have.
 """
 
 

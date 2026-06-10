@@ -85,7 +85,27 @@ def run_agent(question: str) -> str:
     """Run the LangGraph ReAct agent and return the final answer text."""
     agent = build_react_agent()
     result = agent.invoke({"messages": [("user", question)]})
-    return result["messages"][-1].content
+    return _content_to_text(result["messages"][-1].content)
+
+
+def _content_to_text(content: object) -> str:
+    """Normalize LangChain message content to plain text.
+
+    Some Gemini models (e.g. gemini-2.5-flash) return a list of content blocks
+    instead of a string. Extract and join the text parts.
+    """
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+            elif isinstance(block, dict) and "text" in block:
+                parts.append(str(block["text"]))
+        return "\n".join(parts)
+    return str(content)
+
 
 
 def answer_question(question: str, limit: int = 5) -> AnalystState:

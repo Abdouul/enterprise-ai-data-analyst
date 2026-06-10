@@ -1,12 +1,26 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import TypedDict
 
+from dotenv import load_dotenv
 from langgraph.prebuilt import create_react_agent
 
 from src.agent.tools_sql import execute_sql
 from src.agent.tools_vector import search_vector_db_query, search_vector_db
+
+# Load environment variables from src/.env (where OPENAI_API_KEY is stored).
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+
+# Use the OS (Windows) certificate store so corporate proxy CAs are trusted.
+# This avoids "CERTIFICATE_VERIFY_FAILED" behind the corporate SSL proxy.
+try:
+    import truststore
+
+    truststore.inject_into_ssl()
+except Exception:
+    pass
 
 
 class AnalystState(TypedDict):

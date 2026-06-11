@@ -31,3 +31,90 @@ Construire un analyste IA d'entreprise capable d'extraire des informations depui
 - Connecter `src/agent/graph.py` a un LLM de production.
 - Ajouter des tests automatises pour l'ETL et l'API.
 - Ajouter une CI GitHub Actions.
+
+## Lancement (containerisation, health check, question à l'agent)
+
+### Prerequis
+
+- Docker Desktop demarre.
+- Cle Gemini renseignee dans `src/.env` :
+  ```env
+  GCP_API_KEY=ta_cle_gemini
+  ```
+- (Optionnel) Choix des modeles via variables d'environnement (valeurs par
+  defaut dans `docker-compose.yml` : `gemini-2.5-flash` et
+  `gemini-2.5-flash-lite`) :
+  ```powershell
+  $env:AGENT_MODEL="gemini-2.5-flash"
+  $env:FILTER_EXTRACTION_MODEL="gemini-2.5-flash-lite"
+  ```
+
+### 1. Construire l'image
+
+```powershell
+docker build -t enterprise-ai-analyst .
+```
+
+### 2. Lancer la stack (API + Qdrant)
+
+```powershell
+docker compose up -d
+```
+
+Verifier l'etat des conteneurs :
+
+```powershell
+docker compose ps
+```
+
+### 3. Health check
+
+```powershell
+curl http://localhost:8000/health
+# Reponse attendue : {"status":"ok"}
+```
+
+Equivalent PowerShell natif :
+
+```powershell
+(Invoke-WebRequest -Uri http://localhost:8000/health -UseBasicParsing).Content
+```
+
+### 4. Poser une question a l'agent
+
+```powershell
+$body = '{"question":"What was Apple revenue in 2024?","limit":5}'
+(Invoke-WebRequest -Uri http://localhost:8000/ask `
+  -Method Post -ContentType "application/json" `
+  -Body $body -UseBasicParsing).Content
+# Exemple de reponse :
+# {"question":"What was Apple revenue in 2024?","context":[],"sql_result":null,
+#  "answer":"Apple's revenue in 2024 was $85.8 billion USD."}
+```
+
+Variante `curl` (Linux/macOS ou Git Bash) :
+
+```bash
+curl -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"question":"What was Apple revenue in 2024?","limit":5}'
+```
+
+Documentation interactive (Swagger UI) : http://localhost:8000/docs
+
+### 5. Logs et arret
+
+```powershell
+docker compose logs api --tail 40   # consulter les logs de l'API
+docker compose down                 # arreter et supprimer les conteneurs
+```
+
+### Notes
+
+- Le `GCP_API_KEY` est injecte au runtime via `env_file: ./src/.env`, jamais
+  inclus dans l'image.
+- Derriere un proxy d'entreprise (Zscaler), la CA est integree a l'image
+  (`corporate-ca.crt`, genere par `export_ca.ps1`).
+- `torch` est installe en version CPU-only pour eviter le telechargement de la
+  pile CUDA NVIDIA inutile.
+- Le detail complet de la containerisation est dans `Tasks/CONTAINERIZATION.md`.

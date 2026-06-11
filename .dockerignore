@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets - NEVER bake into the image (injected at runtime)
+src/.env
+.env
+*.env
+
+# Version control / IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Docs and local artifacts not needed at runtime
+*.md
+Tasks/
+export_ca.ps1
+
+# Large/regenerable ETL artifacts (mounted as a volume instead)
+data/cleaned/

@@ -20,3 +20,7 @@ data/finance.db
 dist/
 build/
 *.egg-info/
+
+# Corporate proxy CA bundle + export script (environment-specific, do not commit)
+corporate-ca.crt
+export_ca.ps1

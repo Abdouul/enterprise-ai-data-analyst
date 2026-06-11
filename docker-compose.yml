@@ -6,6 +6,11 @@ services:
     environment:
       QDRANT_URL: http://qdrant:6333
       FINANCE_DB_PATH: /app/data/finance.db
+      AGENT_MODEL: ${AGENT_MODEL:-gemini-2.5-flash}
+      FILTER_EXTRACTION_MODEL: ${FILTER_EXTRACTION_MODEL:-gemini-2.5-flash-lite}
+    # Secrets injected at runtime, never baked into the image.
+    env_file:
+      - ./src/.env
     volumes:
       - ./data:/app/data
     depends_on:

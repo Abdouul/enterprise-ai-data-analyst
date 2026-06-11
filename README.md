@@ -53,30 +53,65 @@ python -m src.etl.run_phase1 --ingest
 ```
 ## API
 
+### En local (developpement)
+
 ```bash
 uvicorn src.api.main:app --reload
 ```
 
-Ensuite:
+### Conteneurisee (API + Qdrant)
+
+```bash
+docker build -t enterprise-ai-analyst .
+docker compose up -d
+docker compose ps
+```
+
+Le `GCP_API_KEY` est injecte au runtime via `env_file: ./src/.env` (jamais
+inclus dans l'image). Derriere un proxy d'entreprise (Zscaler), la CA est
+integree a l'image via `corporate-ca.crt`. Detail complet dans
+`Tasks/CONTAINERIZATION.md`.
+
+### Tester l'API
 
 ```bash
 curl "http://localhost:8000/health"
-curl -X POST "http://localhost:8000/ask" -H "Content-Type: application/json" -d "{\"question\":\"Quels sont les risques principaux ?\"}"
+# {"status":"ok"}
+
+curl -X POST "http://localhost:8000/ask" -H "Content-Type: application/json" \
+  -d "{\"question\":\"What was Apple revenue in 2024?\",\"limit\":5}"
+# {"question":"...","context":[],"sql_result":null,
+#  "answer":"Apple's revenue in 2024 was $85.8 billion USD."}
 ```
+
+Documentation interactive (Swagger UI) : http://localhost:8000/docs
 
 ## Variables d'environnement
 
-- `OPENAI_API_KEY`: cle API OpenAI si le graphe agentique est connecte a un modele.
+- `GCP_API_KEY` (ou `GEMINI_API_KEY` / `GOOGLE_API_KEY`): cle API Google Gemini,
+  requise pour l'agent. A placer dans `src/.env`.
+- `LLM_PROVIDER`: fournisseur LLM, par defaut `gemini`. Mettre `openai` pour
+  utiliser OpenAI (necessite alors `OPENAI_API_KEY`).
+- `AGENT_MODEL`: modele de l'agent, par defaut `gemini-2.5-flash`. Les modeles
+  `gemini-3*` retombent automatiquement sur `gemini-2.5-flash` pour le tool
+  calling LangGraph.
+- `FILTER_EXTRACTION_MODEL`: modele lite pour l'extraction de filtres metadata
+  du tool vectoriel, par defaut `gemini-2.5-flash-lite`.
 - `QDRANT_URL`: URL Qdrant, par defaut `http://localhost:6333`.
 - `QDRANT_COLLECTION`: collection Qdrant, par defaut `finance_docs`.
 - `FINANCE_DB_PATH`: chemin SQLite, par defaut `data/finance.db`.
+
+> Securite : ne commitez jamais `src/.env`. Si une cle a ete exposee, revoquez-la
+> et generez-en une nouvelle.
 
 ## Phase 2 - Agent LangGraph
 
 La couche agent est dans `src/agent/`.
 
 - `execute_sql`: outil SQL read-only sur `data/finance.db`, avec retour d'erreur et schema pour permettre la correction par l'agent.
-- `search_vector_db`: outil Qdrant qui extrait d'abord des filtres metadata stricts avec Pydantic/Instructor.
+- `search_vector_db`: outil Qdrant qui extrait d'abord des filtres metadata stricts via un modele Gemini lite (sortie structuree Pydantic), avec repli heuristique si aucune cle n'est disponible.
 - `graph.py`: construit le ReAct agent LangGraph avec ces deux outils.
 
-Pour lancer le vrai agent ReAct, configure `OPENAI_API_KEY`. Sans cle, l'API garde un fallback de recherche vectorielle simple.
+Pour lancer le vrai agent ReAct, configure `GCP_API_KEY` (ou `GEMINI_API_KEY` /
+`GOOGLE_API_KEY`) dans `src/.env`. Sans cle, l'API garde un fallback de recherche
+vectorielle simple.

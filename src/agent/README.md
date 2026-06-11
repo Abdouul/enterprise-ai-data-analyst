@@ -57,4 +57,7 @@ set OPENAI_API_KEY=your_key_here
 python -c "from src.agent.graph import run_agent; print(run_agent('What was Apple revenue in 2024 and what did the Q3 report say about risks?'))"
 ```
 
+The code also loads environment variables from `.env` and `src/.env`, so local
+development can use either file.
+
 Without `OPENAI_API_KEY`, the FastAPI compatibility wrapper still performs vector retrieval, but it does not run the full LangGraph reasoning loop.

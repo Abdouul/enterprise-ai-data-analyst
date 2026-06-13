@@ -86,6 +86,40 @@ curl -X POST "http://localhost:8000/ask" -H "Content-Type: application/json" \
 
 Documentation interactive (Swagger UI) : http://localhost:8000/docs
 
+### Deploiement serverless (Google Cloud Run)
+
+L'API peut etre deployee en serverless sur **Google Cloud Run** (HTTPS auto,
+scale-to-zero, facturation a l'usage via les credits gratuits GCP). L'image est
+construite a distance par Cloud Build, poussee dans Artifact Registry, puis
+lancee par Cloud Run. La cle Gemini est injectee depuis **Secret Manager**, et
+la base SQLite `data/finance.db` est deja incluse dans l'image (les questions
+chiffrees fonctionnent sans Qdrant ; pour le vectoriel, brancher un Qdrant
+externe via `QDRANT_URL`).
+
+Le script `deploy.ps1` enchaine toutes les etapes (auth, activation des APIs,
+Artifact Registry, secret, build + deploiement). Renseigne d'abord `$ProjectId`
+en haut du script et `GCP_API_KEY` dans `src/.env`, puis :
+
+```powershell
+# Deploiement complet (lit GCP_API_KEY depuis src/.env)
+powershell -ExecutionPolicy Bypass -File .\deploy.ps1
+```
+
+Tester le service deploye (l'URL est affichee en fin de script) :
+
+```powershell
+$URL = "https://enterprise-ai-analyst-xxxx.europe-west1.run.app"
+curl "$URL/health"
+curl -X POST "$URL/ask" -H "Content-Type: application/json" `
+  -d "{\"question\":\"What was Apple revenue in 2024?\",\"limit\":5}"
+```
+
+Supprimer le service apres la demo (pour eviter tout cout) :
+
+```powershell
+gcloud run services delete enterprise-ai-analyst --region europe-west1
+```
+
 ## Variables d'environnement
 
 - `GCP_API_KEY` (ou `GEMINI_API_KEY` / `GOOGLE_API_KEY`): cle API Google Gemini,

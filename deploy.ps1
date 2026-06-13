@@ -26,6 +26,12 @@ $Repo      = "app-images"            # Nom du depot Artifact Registry
 $Service   = "enterprise-ai-analyst" # Nom du service Cloud Run
 $SecretName = "gcp-api-key"          # Nom du secret dans Secret Manager
 
+# (Optionnel) Qdrant Cloud pour la recherche vectorielle.
+#   - Laisse $QdrantUrl vide pour un deploiement SQL uniquement (pas de vectoriel).
+#   - Sinon mets l'endpoint du cluster (avec :6333) et ajoute QDRANT_API_KEY=... dans src/.env.
+$QdrantUrl        = ""               # ex: https://xxxx.gcp.cloud.qdrant.io:6333
+$QdrantSecretName = "qdrant-key"     # Nom du secret Qdrant dans Secret Manager
+
 Write-Host "==> Projet: $ProjectId | Region: $Region | Service: $Service" -ForegroundColor Cyan
 
 # -----------------------------------------------------------------------------
@@ -111,6 +117,46 @@ gcloud secrets add-iam-policy-binding $SecretName `
     --role="roles/secretmanager.secretAccessor"
 
 # -----------------------------------------------------------------------------
+# 5b) (Optionnel) Secret + acces pour la cle Qdrant Cloud
+#     Active uniquement si $QdrantUrl est renseigne. La cle est lue depuis
+#     src/.env (ligne QDRANT_API_KEY=...) et stockee SANS retour a la ligne.
+# -----------------------------------------------------------------------------
+$EnvVars = "AGENT_MODEL=gemini-2.5-flash,FILTER_EXTRACTION_MODEL=gemini-2.5-flash-lite"
+$Secrets = "GCP_API_KEY=$SecretName`:latest"
+
+if (-not [string]::IsNullOrWhiteSpace($QdrantUrl)) {
+    $qKey = (Get-Content $envFile |
+        Where-Object { $_ -match '^\s*QDRANT_API_KEY\s*=' } |
+        Select-Object -First 1) -replace '^\s*QDRANT_API_KEY\s*=\s*', ''
+    $qKey = $qKey.Trim()
+    if ([string]::IsNullOrWhiteSpace($qKey)) { throw "QDRANT_API_KEY est vide dans $envFile" }
+
+    gcloud secrets describe $QdrantSecretName 2>$null | Out-Null
+    $qExists = ($LASTEXITCODE -eq 0)
+    $qFile = Join-Path $env:TEMP "qdrant_api_key.txt"
+    [System.IO.File]::WriteAllText($qFile, $qKey)
+    try {
+        if (-not $qExists) {
+            Write-Host "==> Creation du secret '$QdrantSecretName'..." -ForegroundColor Cyan
+            gcloud secrets create $QdrantSecretName --data-file="$qFile"
+        } else {
+            Write-Host "==> Ajout d'une nouvelle version au secret '$QdrantSecretName'..." -ForegroundColor Yellow
+            gcloud secrets versions add $QdrantSecretName --data-file="$qFile"
+        }
+    }
+    finally {
+        Remove-Item $qFile -Force -ErrorAction SilentlyContinue
+    }
+
+    gcloud secrets add-iam-policy-binding $QdrantSecretName `
+        --member="serviceAccount:$RuntimeSa" `
+        --role="roles/secretmanager.secretAccessor"
+
+    $EnvVars = "$EnvVars,QDRANT_URL=$QdrantUrl"
+    $Secrets = "$Secrets,QDRANT_API_KEY=$QdrantSecretName`:latest"
+}
+
+# -----------------------------------------------------------------------------
 # 6) Build + deploiement sur Cloud Run en une commande
 #    --source .        : Cloud Build lit le Dockerfile et pousse l'image
 #    --port 8000       : l'app ecoute sur 8000 (le Dockerfile expose ce port)
@@ -126,8 +172,8 @@ gcloud run deploy $Service `
     --memory 2Gi `
     --cpu 2 `
     --timeout 300 `
-    --set-env-vars "AGENT_MODEL=gemini-2.5-flash,FILTER_EXTRACTION_MODEL=gemini-2.5-flash-lite" `
-    --set-secrets "GCP_API_KEY=$SecretName`:latest"
+    --set-env-vars $EnvVars `
+    --set-secrets $Secrets
 
 # -----------------------------------------------------------------------------
 # 7) Recuperation de l'URL publique et rappel des commandes de test

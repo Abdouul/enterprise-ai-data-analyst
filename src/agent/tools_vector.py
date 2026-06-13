@@ -119,7 +119,12 @@ class VectorSearchTool:
         from sentence_transformers import SentenceTransformer
 
         self.collection = collection or os.getenv("QDRANT_COLLECTION", "finance_docs")
-        self.client = QdrantClient(url=qdrant_url or os.getenv("QDRANT_URL", "http://localhost:6333"))
+        api_key = os.getenv("QDRANT_API_KEY")
+        api_key = api_key.strip() if api_key else None
+        self.client = QdrantClient(
+            url=qdrant_url or os.getenv("QDRANT_URL", "http://localhost:6333"),
+            api_key=api_key,
+        )
         self.model = SentenceTransformer(model_name)
 
     def search(self, query: str, limit: int = 5, filters: VectorSearchFilters | None = None) -> list[dict[str, object]]:

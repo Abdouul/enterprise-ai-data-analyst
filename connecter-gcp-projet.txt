@@ -33,9 +33,9 @@ gcloud run deploy enterprise-ai-analyst `
   #Lien donné à la fin de l'exécution de l'étape 5
 
 
-  #MyCluster Endpoint : https://ad5e1d6e-df20-421a-9a66-403e9e19a60e.europe-west3-0.gcp.cloud.qdrant.io
+  #MyCluster Endpoint :https://ad5e1d6e-df20-421a-9a66-403e9e19a60e.europe-west3-0.gcp.cloud.qdrant.io
 
-  #MyCluster API key : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6OWVlNzU3OTYtNjJlMS00ZmRjLWE2NTUtZmQ4MGJiYjQ1NTRhIn0.moMVrEkCcTZRImVUh762NTBMOYQELidTdFpRyTFnab0
+  #MyCluster API key :eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6OWVlNzU3OTYtNjJlMS00ZmRjLWE2NTUtZmQ4MGJiYjQ1NTRhIn0.moMVrEkCcTZRImVUh762NTBMOYQELidTdFpRyTFnab0
 
   Brancher Qdrant pour le vectoriel
 

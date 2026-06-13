@@ -21,6 +21,7 @@ def run_pipeline(
     collection: str,
     model: str,
     db_path: Path,
+    qdrant_api_key: str | None = None,
 ) -> dict[str, object]:
     """Run the full Phase 1 data preparation workflow.
 
@@ -40,7 +41,7 @@ def run_pipeline(
     if ingest:
         from src.etl.ingest_qdrant import ingest_chunks
 
-        ingested_count = ingest_chunks(chunks_path, collection, qdrant_url, model)
+        ingested_count = ingest_chunks(chunks_path, collection, qdrant_url, model, qdrant_api_key=qdrant_api_key)
 
     return {
         "financial_rows": financial_rows,
@@ -61,12 +62,13 @@ def main() -> None:
     parser.add_argument("--output", default="data/cleaned", type=Path)
     parser.add_argument("--ingest", action="store_true", help="Insert embedded chunks into Qdrant.")
     parser.add_argument("--qdrant-url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
+    parser.add_argument("--qdrant-api-key", default=os.getenv("QDRANT_API_KEY"))
     parser.add_argument("--collection", default=os.getenv("QDRANT_COLLECTION", "finance_docs"))
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--db-path", default=os.getenv("FINANCE_DB_PATH", "data/finance.db"), type=Path)
     args = parser.parse_args()
 
-    result = run_pipeline(args.input, args.output, args.ingest, args.qdrant_url, args.collection, args.model, args.db_path)
+    result = run_pipeline(args.input, args.output, args.ingest, args.qdrant_url, args.collection, args.model, args.db_path, args.qdrant_api_key)
     for key, value in result.items():
         print(f"{key}: {value}")
 

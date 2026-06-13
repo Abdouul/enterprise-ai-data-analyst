@@ -79,6 +79,28 @@ def has_agent_credentials() -> bool:
     return bool(os.getenv("GOOGLE_API_KEY"))
 
 
+def gemini_api_keys() -> list[str]:
+    """Collect all configured Gemini keys (primary + numbered fallbacks), de-duplicated.
+
+    Lets the agent rotate to the next key when one is rate-limited (429) or times out.
+    Add extra keys in .env as GCP_API_KEY2, GCP_API_KEY3, ... (or GEMINI_API_KEY2, ...).
+    """
+    load_environment()
+    names = [
+        "GEMINI_API_KEY", "GOOGLE_API_KEY", "GCP_API_KEY",
+        "GCP_API_KEY2", "GCP_API_KEY3", "GCP_API_KEY4",
+        "GEMINI_API_KEY2", "GEMINI_API_KEY3",
+    ]
+    keys: list[str] = []
+    for name in names:
+        value = os.getenv(name)
+        if value:
+            value = value.strip()
+            if value and value not in keys:
+                keys.append(value)
+    return keys
+
+
 def select_gemini_tool_model() -> str:
     """Select a Gemini model compatible with LangGraph tool calling."""
     requested_model = os.getenv("AGENT_MODEL", GEMINI_TOOL_MODEL_FALLBACK).strip()
@@ -92,7 +114,7 @@ def select_gemini_tool_model() -> str:
     return requested_model
 
 
-def build_chat_model():
+def build_chat_model(api_key: str | None = None):
     """Build the chat model used by the LangGraph ReAct loop."""
     load_environment()
     provider = os.getenv("LLM_PROVIDER", "gemini").lower()
@@ -103,38 +125,62 @@ def build_chat_model():
 
         return ChatOpenAI(model=os.getenv("AGENT_MODEL", "gpt-4o-mini"), temperature=0)
 
-    if not os.getenv("GOOGLE_API_KEY"):
+    if not api_key and not os.getenv("GOOGLE_API_KEY"):
         raise RuntimeError("GEMINI_API_KEY, GOOGLE_API_KEY, or GCP_API_KEY is required to run the Gemini agent.")
 
     from langchain_google_genai import ChatGoogleGenerativeAI
 
-    return ChatGoogleGenerativeAI(model=select_gemini_tool_model(), temperature=0)
+    kwargs: dict[str, object] = {"model": select_gemini_tool_model(), "temperature": 0}
+    if api_key:
+        kwargs["google_api_key"] = api_key
+    return ChatGoogleGenerativeAI(**kwargs)
 
 
-def build_react_agent():
+def build_react_agent(api_key: str | None = None):
     """Build the LangGraph ReAct agent for Phase 2."""
     from langgraph.prebuilt import create_react_agent
     from src.agent.tools_sql import execute_sql
     from src.agent.tools_vector import search_vector_db
 
-    llm = build_chat_model()
+    llm = build_chat_model(api_key=api_key)
     return create_react_agent(llm, tools=[execute_sql, search_vector_db], state_modifier=SYSTEM_PROMPT)
 
 
+QUOTA_FALLBACK_MESSAGE = (
+    "Gemini quota/rate-limit error: every configured API key is rate-limited or out of quota. "
+    "Wait for the retry window, add another key (GCP_API_KEY2/3) in .env, enable billing/increase "
+    "quota, or remove the Gemini keys to use the local vector-search fallback."
+)
+
+
 def run_agent(question: str) -> str:
-    """Run the LangGraph ReAct agent and return the final answer text."""
-    agent = build_react_agent()
-    try:
-        result = agent.invoke({"messages": [("user", question)]})
-        return _content_to_text(result["messages"][-1].content)
-    except Exception as exc:
-        if is_llm_quota_error(exc):
-            return (
-                "Gemini quota/rate-limit error: your API key is loaded, but the project has no available quota "
-                "or is temporarily rate-limited. Wait for the retry window, enable billing/increase quota, or "
-                "remove the Gemini key to use the local vector-search fallback."
-            )
-        raise
+    """Run the LangGraph ReAct agent, rotating API keys on quota/timeout failures."""
+    provider = os.getenv("LLM_PROVIDER", "gemini").lower()
+    keys: list[str | None] = gemini_api_keys() if provider == "gemini" else []
+    if not keys:
+        keys = [None]
+
+    for index, key in enumerate(keys):
+        if key:
+            # Align the tool-side filter extraction (tools_vector) with the active key.
+            os.environ["GOOGLE_API_KEY"] = key
+            os.environ["GCP_API_KEY"] = key
+        try:
+            agent = build_react_agent(api_key=key)
+            result = agent.invoke({"messages": [("user", question)]})
+            return _content_to_text(result["messages"][-1].content)
+        except Exception as exc:
+            is_last = index == len(keys) - 1
+            if is_retryable_llm_error(exc) and not is_last:
+                print(
+                    f"[agent.graph] Gemini key #{index + 1} failed ({exc.__class__.__name__}); "
+                    f"rotating to key #{index + 2}."
+                )
+                continue
+            if is_llm_quota_error(exc):
+                return QUOTA_FALLBACK_MESSAGE
+            raise
+    return QUOTA_FALLBACK_MESSAGE
 
 
 def _content_to_text(content: object) -> str:
@@ -170,6 +216,24 @@ def is_llm_quota_error(exc: Exception) -> bool:
         name = current.__class__.__name__.lower()
         message = str(current).lower()
         if any(marker in name or marker in message for marker in quota_markers):
+            return True
+        current = current.__cause__ or current.__context__
+    return False
+
+
+def is_retryable_llm_error(exc: Exception) -> bool:
+    """Detect errors that justify rotating to the next API key (quota or transient)."""
+    if is_llm_quota_error(exc):
+        return True
+    transient_markers = [
+        "deadline_exceeded", "deadlineexceeded", "timeout", "timed out",
+        "unavailable", "503", "504", "connection", "temporarily",
+    ]
+    current: BaseException | None = exc
+    while current:
+        name = current.__class__.__name__.lower()
+        message = str(current).lower()
+        if any(marker in name or marker in message for marker in transient_markers):
             return True
         current = current.__cause__ or current.__context__
     return False

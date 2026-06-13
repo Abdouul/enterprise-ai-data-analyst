@@ -124,6 +124,45 @@ gcloud secrets add-iam-policy-binding $SecretName `
 $EnvVars = "AGENT_MODEL=gemini-2.5-flash,FILTER_EXTRACTION_MODEL=gemini-2.5-flash-lite"
 $Secrets = "GCP_API_KEY=$SecretName`:latest"
 
+# -----------------------------------------------------------------------------
+# 5a) (Optionnel) Cles Gemini de secours (fallback automatique sur 429/timeout)
+#     Pour chaque GCP_API_KEY2/3/4 present dans src/.env, on cree un secret dedie
+#     (sans newline) et on l'injecte sous le meme nom de variable. Le code
+#     (src/agent/graph.py) bascule sur la cle suivante quand une est rate-limitee.
+# -----------------------------------------------------------------------------
+foreach ($n in 2, 3, 4) {
+    $envVarName = "GCP_API_KEY$n"
+    $fbKey = (Get-Content $envFile |
+        Where-Object { $_ -match "^\s*$envVarName\s*=" } |
+        Select-Object -First 1) -replace "^\s*$envVarName\s*=\s*", ''
+    $fbKey = $fbKey.Trim()
+    if ([string]::IsNullOrWhiteSpace($fbKey)) { continue }
+
+    $fbSecret = "gcp-api-key-$n"
+    gcloud secrets describe $fbSecret 2>$null | Out-Null
+    $fbExists = ($LASTEXITCODE -eq 0)
+    $fbFile = Join-Path $env:TEMP "$fbSecret.txt"
+    [System.IO.File]::WriteAllText($fbFile, $fbKey)
+    try {
+        if (-not $fbExists) {
+            Write-Host "==> Creation du secret '$fbSecret'..." -ForegroundColor Cyan
+            gcloud secrets create $fbSecret --data-file="$fbFile"
+        } else {
+            Write-Host "==> Nouvelle version du secret '$fbSecret'..." -ForegroundColor Yellow
+            gcloud secrets versions add $fbSecret --data-file="$fbFile"
+        }
+    }
+    finally {
+        Remove-Item $fbFile -Force -ErrorAction SilentlyContinue
+    }
+
+    gcloud secrets add-iam-policy-binding $fbSecret `
+        --member="serviceAccount:$RuntimeSa" `
+        --role="roles/secretmanager.secretAccessor"
+
+    $Secrets = "$Secrets,$envVarName=$fbSecret`:latest"
+}
+
 if (-not [string]::IsNullOrWhiteSpace($QdrantUrl)) {
     $qKey = (Get-Content $envFile |
         Where-Object { $_ -match '^\s*QDRANT_API_KEY\s*=' } |

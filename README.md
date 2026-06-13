@@ -51,6 +51,14 @@ Pipeline complet avec Qdrant et embeddings HuggingFace locaux:
 docker compose up -d qdrant
 python -m src.etl.run_phase1 --ingest
 ```
+
+Ingestion vers un cluster **Qdrant Cloud** (au lieu du Qdrant local) :
+
+```powershell
+$env:QDRANT_URL = "https://xxxx.gcp.cloud.qdrant.io:6333"
+$env:QDRANT_API_KEY = "<ta_cle_qdrant_cloud>"
+python -m src.etl.run_phase1 --ingest
+```
 ## API
 
 ### En local (developpement)
@@ -93,8 +101,15 @@ scale-to-zero, facturation a l'usage via les credits gratuits GCP). L'image est
 construite a distance par Cloud Build, poussee dans Artifact Registry, puis
 lancee par Cloud Run. La cle Gemini est injectee depuis **Secret Manager**, et
 la base SQLite `data/finance.db` est deja incluse dans l'image (les questions
-chiffrees fonctionnent sans Qdrant ; pour le vectoriel, brancher un Qdrant
-externe via `QDRANT_URL`).
+chiffrees fonctionnent sans Qdrant).
+
+Pour la recherche vectorielle en serverless, brancher un **Qdrant Cloud** (cluster
+gratuit) : renseigne `$QdrantUrl` dans `deploy.ps1` et `QDRANT_API_KEY` dans
+`src/.env`, ingere les donnees vers ce cluster
+(`python -m src.etl.run_phase1 --ingest` avec `QDRANT_URL`/`QDRANT_API_KEY`
+pointant dessus), puis redeploie. Pour la resilience, ajoute aussi tes cles
+Gemini de secours (`GCP_API_KEY2`, `GCP_API_KEY3`) dans `src/.env` : `deploy.ps1`
+cree les secrets correspondants et les injecte automatiquement.
 
 Le script `deploy.ps1` enchaine toutes les etapes (auth, activation des APIs,
 Artifact Registry, secret, build + deploiement). Renseigne d'abord `$ProjectId`
@@ -124,6 +139,10 @@ gcloud run services delete enterprise-ai-analyst --region europe-west1
 
 - `GCP_API_KEY` (ou `GEMINI_API_KEY` / `GOOGLE_API_KEY`): cle API Google Gemini,
   requise pour l'agent. A placer dans `src/.env`.
+- `GCP_API_KEY2`, `GCP_API_KEY3`, `GCP_API_KEY4` (optionnelles): cles Gemini de
+  secours. L'agent bascule automatiquement sur la cle suivante quand une cle est
+  rate-limitee (`429`) ou en timeout (voir `gemini_api_keys()` dans
+  `src/agent/graph.py`).
 - `LLM_PROVIDER`: fournisseur LLM, par defaut `gemini`. Mettre `openai` pour
   utiliser OpenAI (necessite alors `OPENAI_API_KEY`).
 - `AGENT_MODEL`: modele de l'agent, par defaut `gemini-2.5-flash`. Les modeles
@@ -131,7 +150,11 @@ gcloud run services delete enterprise-ai-analyst --region europe-west1
   calling LangGraph.
 - `FILTER_EXTRACTION_MODEL`: modele lite pour l'extraction de filtres metadata
   du tool vectoriel, par defaut `gemini-2.5-flash-lite`.
-- `QDRANT_URL`: URL Qdrant, par defaut `http://localhost:6333`.
+- `QDRANT_URL`: URL Qdrant, par defaut `http://localhost:6333`. Pour Qdrant
+  Cloud, utiliser l'endpoint du cluster avec le port `:6333`
+  (ex: `https://xxxx.gcp.cloud.qdrant.io:6333`).
+- `QDRANT_API_KEY` (optionnelle): cle API Qdrant Cloud. Requise uniquement
+  lorsque `QDRANT_URL` pointe vers un cluster Qdrant Cloud.
 - `QDRANT_COLLECTION`: collection Qdrant, par defaut `finance_docs`.
 - `FINANCE_DB_PATH`: chemin SQLite, par defaut `data/finance.db`.
 
@@ -149,3 +172,13 @@ La couche agent est dans `src/agent/`.
 Pour lancer le vrai agent ReAct, configure `GCP_API_KEY` (ou `GEMINI_API_KEY` /
 `GOOGLE_API_KEY`) dans `src/.env`. Sans cle, l'API garde un fallback de recherche
 vectorielle simple.
+
+### Resilience multi-cles
+
+L'agent accepte plusieurs cles Gemini (`GCP_API_KEY`, puis `GCP_API_KEY2`,
+`GCP_API_KEY3`, `GCP_API_KEY4`). A l'execution, `run_agent()` essaie chaque cle
+dans l'ordre et bascule sur la suivante quand une cle renvoie une erreur de quota
+(`429`) ou un timeout. Si toutes les cles sont epuisees, un message clair est
+renvoye. En production (Cloud Run), chaque cle est stockee dans un secret dedie
+(`gcp-api-key`, `gcp-api-key-2`, `gcp-api-key-3`) injecte sous le meme nom de
+variable ; `deploy.ps1` cree ces secrets automatiquement a partir de `src/.env`.

@@ -39,7 +39,19 @@ Before semantic search, it extracts strict Pydantic metadata filters:
 - `document_period`
 - `document_type`
 
-If `OPENAI_API_KEY` and `instructor` are available, filter extraction uses Instructor. Otherwise it falls back to a deterministic local extractor.
+If a Gemini key (`GCP_API_KEY`) is available, filter extraction uses a lite
+Gemini model (`FILTER_EXTRACTION_MODEL`, default `gemini-2.5-flash-lite`) with
+structured Pydantic output. Otherwise it falls back to a deterministic local
+extractor. The tool reads `QDRANT_URL` / `QDRANT_API_KEY`, so it works against a
+local Qdrant or a Qdrant Cloud cluster.
+
+## Multi-key fallback
+
+`run_agent()` accepts several Gemini keys and rotates between them when one is
+rate-limited (`429`) or times out. Keys are read, in order, from `GCP_API_KEY`,
+`GCP_API_KEY2`, `GCP_API_KEY3`, `GCP_API_KEY4` (also `GEMINI_API_KEY` /
+`GOOGLE_API_KEY`). When every key is exhausted, a clear quota message is
+returned instead of raising.
 
 ## Run
 
@@ -50,14 +62,15 @@ docker compose up -d qdrant
 python -m src.etl.run_phase1 --ingest
 ```
 
-Run the full ReAct agent with an OpenAI key:
+Run the full ReAct agent with a Gemini key:
 
 ```bash
-set OPENAI_API_KEY=your_key_here
+set GCP_API_KEY=your_key_here
 python -c "from src.agent.graph import run_agent; print(run_agent('What was Apple revenue in 2024 and what did the Q3 report say about risks?'))"
 ```
 
 The code also loads environment variables from `.env` and `src/.env`, so local
 development can use either file.
 
-Without `OPENAI_API_KEY`, the FastAPI compatibility wrapper still performs vector retrieval, but it does not run the full LangGraph reasoning loop.
+Without a Gemini key, the FastAPI compatibility wrapper still performs vector
+retrieval, but it does not run the full LangGraph reasoning loop.

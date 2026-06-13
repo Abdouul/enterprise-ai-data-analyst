@@ -88,7 +88,11 @@ launches the FastAPI REST endpoint.
 Configuration is passed as environment variables, **not** build args:
 
 - `GCP_API_KEY` — Gemini key (from `src/.env` via compose `env_file`)
-- `QDRANT_URL` — `http://qdrant:6333` inside the compose network
+- `GCP_API_KEY2` / `GCP_API_KEY3` / `GCP_API_KEY4` — optional fallback Gemini
+  keys; the agent rotates to the next one on `429`/timeout
+- `QDRANT_URL` — `http://qdrant:6333` inside the compose network (or a Qdrant
+  Cloud endpoint with `:6333`)
+- `QDRANT_API_KEY` — Qdrant Cloud API key (only when `QDRANT_URL` is a cloud cluster)
 - `QDRANT_COLLECTION` — Qdrant collection name (default `finance_docs`)
 - `FINANCE_DB_PATH` — `/app/data/finance.db`
 - `AGENT_MODEL` / `FILTER_EXTRACTION_MODEL` — Gemini model overrides
@@ -121,6 +125,20 @@ docker compose up --build
 This starts both `api` (port 8000) and `qdrant` (ports 6333/6334). The
 `GCP_API_KEY` is read from `src/.env` via `env_file`.
 
+### Option C — serverless on Google Cloud Run
+
+The same image runs on **Cloud Run** (built remotely by Cloud Build, no local
+Docker needed). Secrets (Gemini keys + Qdrant key) come from **Secret Manager**,
+and `data/finance.db` is baked into the image so SQL questions work without
+Qdrant. Vector search uses a **Qdrant Cloud** cluster via `QDRANT_URL` /
+`QDRANT_API_KEY`. The `deploy.ps1` script automates the full flow (auth, API
+enablement, Artifact Registry, secrets for `gcp-api-key`/`gcp-api-key-2/3` and
+`qdrant-key`, IAM, build + deploy):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\deploy.ps1
+```
+
 ## Verify
 
 ```bash
@@ -143,7 +161,9 @@ curl -X POST http://localhost:8000/ask \
   store; in a Linux container you may instead need to mount the corporate root
   CA and set `SSL_CERT_FILE`/`REQUESTS_CA_BUNDLE`.
 - **Gemini quota**: a `429 RESOURCE_EXHAUSTED` means the model has no quota on
-  the key; switch `AGENT_MODEL` or enable billing for that model.
+  the key. The agent automatically rotates to the next configured key
+  (`GCP_API_KEY2`, `GCP_API_KEY3`, ...); if all are exhausted, switch
+  `AGENT_MODEL` or enable billing for that model.
 
 ---
 

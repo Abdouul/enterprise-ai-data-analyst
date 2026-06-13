@@ -25,3 +25,6 @@ build/
 # Corporate proxy CA bundle + export script (environment-specific, do not commit)
 corporate-ca.crt
 export_ca.ps1
+
+# Personal scratch notes with API keys (never commit)
+connecter-gcp-projet.txt

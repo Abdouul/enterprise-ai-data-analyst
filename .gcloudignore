@@ -1,34 +1,18 @@
-# .gcloudignore - controls what is uploaded to Cloud Build by `gcloud run deploy --source .`
-# Without this file, gcloud falls back to .gitignore, which excludes corporate-ca.crt
-# and would break the Dockerfile's `COPY corporate-ca.crt` step.
-
-# Version control
+.gcloudignore
 .git/
-.gitignore
-
-# Python caches / envs (huge, not needed by the build)
+.github/
+.vscode/
+.idea/
+venv/
+.venv/
+env/
 __pycache__/
 *.py[cod]
-*.pyo
-.venv/
-venv/
-env/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# Secrets - NEVER upload (injected at runtime via Secret Manager)
-.env
 *.env
 src/.env
-
-# Local-only docs and helper scripts not needed by the build
+data/finance.db
+data/raw_pdfs/
+data/raw_txts/
+data/cleaned/parsed.jsonl
+data/cleaned/cleaned.jsonl
 Tasks/
-export_ca.ps1
-deploy.ps1
-connecter-gcp-projet.txt
-
-# Large regenerable ETL artifacts (the baked data/finance.db IS kept on purpose)
-data/cleaned/
-
-# NOTE: corporate-ca.crt is intentionally NOT ignored here so the Dockerfile can COPY it.

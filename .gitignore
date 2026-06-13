@@ -15,6 +15,7 @@ env/
 
 data/cleaned/*
 !data/cleaned/.gitkeep
+data/models/
 data/finance.db
 
 dist/

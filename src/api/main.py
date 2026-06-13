@@ -14,6 +14,18 @@ class AskRequest(BaseModel):
     limit: int = Field(default=5, ge=1, le=20)
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    """Describe the API and expose its main endpoints."""
+    return {
+        "service": "Enterprise AI Data Analyst",
+        "status": "running",
+        "documentation": "/docs",
+        "health": "/health",
+        "ask": "POST /ask",
+    }
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}

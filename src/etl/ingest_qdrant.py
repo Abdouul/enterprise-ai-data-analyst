@@ -11,7 +11,7 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 
-DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+DEFAULT_MODEL = os.getenv("EMBEDDING_MODEL_PATH", "sentence-transformers/all-MiniLM-L6-v2")
 
 
 def point_id(chunk_id: str) -> str:
@@ -26,39 +26,41 @@ def point_id(chunk_id: str) -> str:
 def ingest_chunks(
     input_file: Path,
     collection: str,
-    qdrant_url: str,
+    qdrant_url: str | None,
     model_name: str = DEFAULT_MODEL,
     batch_size: int = 64,
-    qdrant_api_key: str | None = None,
+    qdrant_path: str | None = None,
 ) -> int:
     """Embed cleaned chunks with a local HuggingFace model and upsert to Qdrant."""
     model = SentenceTransformer(model_name)
-    api_key = (qdrant_api_key or os.getenv("QDRANT_API_KEY") or "").strip() or None
-    client = QdrantClient(url=qdrant_url, api_key=api_key)
+    client = QdrantClient(path=qdrant_path) if qdrant_path else QdrantClient(url=qdrant_url)
     vector_size = model.get_sentence_embedding_dimension()
 
-    client.recreate_collection(
-        collection_name=collection,
-        vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
-    )
+    try:
+        client.recreate_collection(
+            collection_name=collection,
+            vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
+        )
 
-    points: list[PointStruct] = []
-    total = 0
-    with input_file.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            record = json.loads(line)
-            vector = model.encode(record["text"]).tolist()
-            payload = {**record, "metadata": record.get("metadata", {})}
-            points.append(PointStruct(id=point_id(record["id"]), vector=vector, payload=payload))
-            if len(points) >= batch_size:
-                client.upsert(collection_name=collection, points=points)
-                total += len(points)
-                points = []
+        points: list[PointStruct] = []
+        total = 0
+        with input_file.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                record = json.loads(line)
+                vector = model.encode(record["text"]).tolist()
+                payload = {**record, "metadata": record.get("metadata", {})}
+                points.append(PointStruct(id=point_id(record["id"]), vector=vector, payload=payload))
+                if len(points) >= batch_size:
+                    client.upsert(collection_name=collection, points=points)
+                    total += len(points)
+                    points = []
 
-    if points:
-        client.upsert(collection_name=collection, points=points)
-        total += len(points)
-    return total
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+        return total
+    finally:
+        client.close()
 
 
 def main() -> None:
@@ -67,11 +69,10 @@ def main() -> None:
     parser.add_argument("--input", default="data/cleaned/chunks.jsonl", type=Path)
     parser.add_argument("--collection", default=os.getenv("QDRANT_COLLECTION", "finance_docs"))
     parser.add_argument("--qdrant-url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
-    parser.add_argument("--qdrant-api-key", default=os.getenv("QDRANT_API_KEY"))
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--batch-size", default=64, type=int)
     args = parser.parse_args()
-    count = ingest_chunks(args.input, args.collection, args.qdrant_url, args.model, args.batch_size, args.qdrant_api_key)
+    count = ingest_chunks(args.input, args.collection, args.qdrant_url, args.model, args.batch_size)
     print(f"Ingested {count} chunk(s) into Qdrant collection {args.collection}")
 
 

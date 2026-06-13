@@ -1,0 +1,52 @@
+[
+  {
+    "id": "apple_mixed",
+    "question": "What was Apple's revenue in 2024, and what risks were mentioned in its Q3 report?",
+    "answer_summary": "Apple revenue was $85.8B; the answer listed geopolitical, supply-chain, TSMC, EU regulatory, FX, competition, antitrust, and privacy risks.",
+    "evidence": "SQL returned 85.8. Three Apple Q3 passages were retrieved, including Risk Factors Summary and Supply Chain Concentration Risk.",
+    "latency_seconds": 4.088,
+    "faithfulness": 1.0,
+    "answer_relevance": 1.0,
+    "notes": "All claims were supported by SQL or retrieved passages."
+  },
+  {
+    "id": "alphabet_mixed",
+    "question": "What was Alphabet's revenue in 2024, and what business risks were discussed in its Q1 report?",
+    "answer_summary": "Alphabet revenue was $80.5B; risks covered AI disruption to Search, EU DMA, DOJ antitrust, AI Overviews monetization, and CapEx intensity.",
+    "evidence": "SQL returned 80.5. Three Alphabet Q1 transcript passages were retrieved from Capital Allocation and related sections.",
+    "latency_seconds": 5.547,
+    "faithfulness": 1.0,
+    "answer_relevance": 1.0,
+    "notes": "Revenue and all five risks matched the available evidence."
+  },
+  {
+    "id": "highest_net_income_sql",
+    "question": "Which company has the highest net income in the SQL database, and what is the amount?",
+    "answer_summary": "Microsoft Corporation had the highest net income at $88.1B.",
+    "evidence": "The ordered SQL query returned Microsoft Corporation and 88.1 as its first row.",
+    "latency_seconds": 1.451,
+    "faithfulness": 1.0,
+    "answer_relevance": 1.0,
+    "notes": "The answer exactly matched the SQL result."
+  },
+  {
+    "id": "microsoft_meta_comparison",
+    "question": "Compare Microsoft and Meta revenue in the database, then summarize one AI strategy mentioned in each company's report.",
+    "answer_summary": "Microsoft revenue was $245.1B and Meta revenue was $134.9B. The answer described Azure AI growth and Meta's Llama/open-source assistant strategy.",
+    "evidence": "SQL returned both rows. The API payload exposed the Meta AI Assistant/Llama passage, but only the latest vector-tool result was retained in context.",
+    "latency_seconds": 5.12,
+    "faithfulness": 0.8,
+    "answer_relevance": 1.0,
+    "notes": "Correct and relevant, but Microsoft's qualitative evidence was not retained in the final API context payload."
+  },
+  {
+    "id": "tesla_risks",
+    "question": "What risks or challenges were discussed in Tesla's Q4 FY2023 shareholder letter?",
+    "answer_summary": "The answer covered Chinese EV competition, key-person risk, autonomy regulation, margin recovery, Cybertruck ramp, labor relations, and pricing pressure.",
+    "evidence": "Five Tesla passages were returned, including Key Risks and Pricing Strategy and Margin Pressure.",
+    "latency_seconds": 3.768,
+    "faithfulness": 1.0,
+    "answer_relevance": 1.0,
+    "notes": "The answer was directly supported by the retrieved shareholder-letter sections."
+  }
+]

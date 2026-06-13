@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import ast
+import json
 import os
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from dotenv import load_dotenv
 
 
-GEMINI_TOOL_MODEL_FALLBACK = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 
 class AnalystState(TypedDict):
@@ -35,6 +37,10 @@ SQL rules:
   'Microsoft Corporation', 'Tesla, Inc.'). NEVER filter with an exact short
   name like company_name = 'Apple'. ALWAYS match partially and
   case-insensitively, e.g. WHERE LOWER(company_name) LIKE '%apple%'.
+- The SQL table contains annual figures only. In a mixed question such as
+  "revenue in 2024 and risks in the Q3 report", apply 2024 to the SQL query
+  but apply Q3 only to the vector search. NEVER add a quarter or Q3 condition
+  to the SQL query.
 - Revenue and net income are expressed in billions of USD
   (columns revenue_billion_usd and net_income_billion_usd).
 - If a query returns 0 rows, broaden the filter (drop the year or use LIKE)
@@ -53,10 +59,6 @@ def load_environment() -> None:
     load_dotenv(project_root / ".env")
     load_dotenv(project_root / "src" / ".env")
 
-    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GCP_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if gemini_key and not os.getenv("GOOGLE_API_KEY"):
-        os.environ["GOOGLE_API_KEY"] = gemini_key
-
     try:
         import truststore
 
@@ -66,44 +68,21 @@ def load_environment() -> None:
 
 
 def has_agent_credentials() -> bool:
-    """Return whether the configured LLM provider has credentials available."""
+    """Return whether the GCP Gemini API key is available."""
     load_environment()
-    provider = os.getenv("LLM_PROVIDER", "gemini").lower()
-    if provider == "openai":
-        return bool(os.getenv("OPENAI_API_KEY"))
-    return bool(os.getenv("GOOGLE_API_KEY"))
-
-
-def select_gemini_tool_model() -> str:
-    """Select a Gemini model compatible with LangGraph tool calling."""
-    requested_model = os.getenv("AGENT_MODEL", GEMINI_TOOL_MODEL_FALLBACK).strip()
-    model_lower = requested_model.lower()
-    if model_lower.startswith("gemini-3"):
-        print(
-            f"[agent.graph] {requested_model} requires thought signatures for tool calls; "
-            f"using {GEMINI_TOOL_MODEL_FALLBACK} for LangGraph ReAct tools."
-        )
-        return GEMINI_TOOL_MODEL_FALLBACK
-    return requested_model
+    return bool(os.getenv("GCP_API_KEY"))
 
 
 def build_chat_model():
-    """Build the chat model used by the LangGraph ReAct loop."""
+    """Build the Gemini 3.5 Flash model used by the LangGraph ReAct loop."""
     load_environment()
-    provider = os.getenv("LLM_PROVIDER", "gemini").lower()
-    if provider == "openai":
-        if not os.getenv("OPENAI_API_KEY"):
-            raise RuntimeError("OPENAI_API_KEY is required when LLM_PROVIDER=openai.")
-        from langchain_openai import ChatOpenAI
-
-        return ChatOpenAI(model=os.getenv("AGENT_MODEL", "gpt-4o-mini"), temperature=0)
-
-    if not os.getenv("GOOGLE_API_KEY"):
-        raise RuntimeError("GEMINI_API_KEY, GOOGLE_API_KEY, or GCP_API_KEY is required to run the Gemini agent.")
+    api_key = os.getenv("GCP_API_KEY")
+    if not api_key:
+        raise RuntimeError("GCP_API_KEY is required to run the Gemini agent.")
 
     from langchain_google_genai import ChatGoogleGenerativeAI
 
-    return ChatGoogleGenerativeAI(model=select_gemini_tool_model(), temperature=0)
+    return ChatGoogleGenerativeAI(model=GEMINI_MODEL, google_api_key=api_key, temperature=0)
 
 
 def build_react_agent():
@@ -118,18 +97,68 @@ def build_react_agent():
 
 def run_agent(question: str) -> str:
     """Run the LangGraph ReAct agent and return the final answer text."""
+    return _run_agent_state(question)["answer"]
+
+
+def _run_agent_state(question: str) -> AnalystState:
+    """Run the agent and preserve SQL/vector tool outputs for the API."""
     agent = build_react_agent()
     try:
         result = agent.invoke({"messages": [("user", question)]})
-        return _content_to_text(result["messages"][-1].content)
+        from src.agent.cost_tracker import log_cost, tracker_from_messages
+
+        log_cost(tracker_from_messages(result["messages"], GEMINI_MODEL), event="agent_loop")
+        context, sql_result = _extract_tool_results(result["messages"])
+        return {
+            "question": question,
+            "context": context,
+            "sql_result": sql_result,
+            "answer": _content_to_text(result["messages"][-1].content),
+        }
     except Exception as exc:
         if is_llm_quota_error(exc):
-            return (
-                "Gemini quota/rate-limit error: your API key is loaded, but the project has no available quota "
-                "or is temporarily rate-limited. Wait for the retry window, enable billing/increase quota, or "
-                "remove the Gemini key to use the local vector-search fallback."
-            )
+            return {
+                "question": question,
+                "context": [],
+                "sql_result": None,
+                "answer": (
+                    "Gemini quota/rate-limit error: your API key is loaded, but the project has no available quota "
+                    "or is temporarily rate-limited. Wait for the retry window, enable billing/increase quota, or "
+                    "remove the Gemini key to use the local vector-search fallback."
+                ),
+            }
         raise
+
+
+def _parse_tool_content(content: object) -> Any:
+    """Convert LangChain tool content into its original Python structure."""
+    if not isinstance(content, str):
+        return content
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        try:
+            return ast.literal_eval(content)
+        except (SyntaxError, ValueError):
+            return content
+
+
+def _extract_tool_results(messages: list[object]) -> tuple[list[dict[str, object]], dict[str, object] | None]:
+    """Extract the latest vector and SQL results from LangGraph ToolMessages."""
+    context: list[dict[str, object]] = []
+    sql_result: dict[str, object] | None = None
+
+    for message in messages:
+        tool_name = getattr(message, "name", None)
+        parsed = _parse_tool_content(getattr(message, "content", None))
+        if tool_name == "execute_sql" and isinstance(parsed, dict):
+            sql_result = parsed
+        elif tool_name == "search_vector_db" and isinstance(parsed, dict):
+            results = parsed.get("results", [])
+            if isinstance(results, list):
+                context = [item for item in results if isinstance(item, dict)]
+
+    return context, sql_result
 
 
 def _content_to_text(content: object) -> str:
@@ -173,17 +202,12 @@ def is_llm_quota_error(exc: Exception) -> bool:
 def answer_question(question: str, limit: int = 5) -> AnalystState:
     """Compatibility wrapper used by the FastAPI endpoint."""
     if has_agent_credentials():
-        return {
-            "question": question,
-            "context": [],
-            "sql_result": None,
-            "answer": run_agent(question),
-        }
+        return _run_agent_state(question)
 
     from src.agent.tools_vector import search_vector_db_query
 
     vector_result = search_vector_db_query(question, limit=limit)
-    answer = "Vector context retrieved. Set GEMINI_API_KEY, GOOGLE_API_KEY, or GCP_API_KEY to run the Gemini agent."
+    answer = "Vector context retrieved. Set GCP_API_KEY to run the Gemini agent."
     return {
         "question": question,
         "context": vector_result["results"],

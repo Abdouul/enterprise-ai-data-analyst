@@ -11,7 +11,7 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
 
-DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+DEFAULT_MODEL = os.getenv("EMBEDDING_MODEL_PATH", "sentence-transformers/all-MiniLM-L6-v2")
 
 
 def point_id(chunk_id: str) -> str:
@@ -23,34 +23,44 @@ def point_id(chunk_id: str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
 
 
-def ingest_chunks(input_file: Path, collection: str, qdrant_url: str, model_name: str = DEFAULT_MODEL, batch_size: int = 64) -> int:
+def ingest_chunks(
+    input_file: Path,
+    collection: str,
+    qdrant_url: str | None,
+    model_name: str = DEFAULT_MODEL,
+    batch_size: int = 64,
+    qdrant_path: str | None = None,
+) -> int:
     """Embed cleaned chunks with a local HuggingFace model and upsert to Qdrant."""
     model = SentenceTransformer(model_name)
-    client = QdrantClient(url=qdrant_url)
+    client = QdrantClient(path=qdrant_path) if qdrant_path else QdrantClient(url=qdrant_url)
     vector_size = model.get_sentence_embedding_dimension()
 
-    client.recreate_collection(
-        collection_name=collection,
-        vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
-    )
+    try:
+        client.recreate_collection(
+            collection_name=collection,
+            vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
+        )
 
-    points: list[PointStruct] = []
-    total = 0
-    with input_file.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            record = json.loads(line)
-            vector = model.encode(record["text"]).tolist()
-            payload = {**record, "metadata": record.get("metadata", {})}
-            points.append(PointStruct(id=point_id(record["id"]), vector=vector, payload=payload))
-            if len(points) >= batch_size:
-                client.upsert(collection_name=collection, points=points)
-                total += len(points)
-                points = []
+        points: list[PointStruct] = []
+        total = 0
+        with input_file.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                record = json.loads(line)
+                vector = model.encode(record["text"]).tolist()
+                payload = {**record, "metadata": record.get("metadata", {})}
+                points.append(PointStruct(id=point_id(record["id"]), vector=vector, payload=payload))
+                if len(points) >= batch_size:
+                    client.upsert(collection_name=collection, points=points)
+                    total += len(points)
+                    points = []
 
-    if points:
-        client.upsert(collection_name=collection, points=points)
-        total += len(points)
-    return total
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+        return total
+    finally:
+        client.close()
 
 
 def main() -> None:

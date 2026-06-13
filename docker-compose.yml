@@ -4,6 +4,7 @@ services:
     ports:
       - "8000:8000"
     environment:
+      PORT: 8000
       QDRANT_URL: http://qdrant:6333
       FINANCE_DB_PATH: /app/data/finance.db
       AGENT_MODEL: ${AGENT_MODEL:-gemini-2.5-flash}

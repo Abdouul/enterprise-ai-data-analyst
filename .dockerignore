@@ -27,5 +27,5 @@ src/.env
 Tasks/
 export_ca.ps1
 
-# Large/regenerable ETL artifacts (mounted as a volume instead)
-data/cleaned/
+# Local database is recreated at startup.
+data/finance.db

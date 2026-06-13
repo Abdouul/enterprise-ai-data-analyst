@@ -80,16 +80,38 @@ $secretExists = $true
 try { gcloud secrets describe $SecretName 2>$null | Out-Null }
 catch { $secretExists = $false }
 
-if (-not $secretExists) {
-    Write-Host "==> Creation du secret '$SecretName'..." -ForegroundColor Cyan
-    $apiKey | gcloud secrets create $SecretName --data-file=-
-} else {
-    Write-Host "==> Ajout d'une nouvelle version au secret '$SecretName'..." -ForegroundColor Yellow
-    $apiKey | gcloud secrets versions add $SecretName --data-file=-
+# Ecrire la cle dans un fichier temporaire SANS retour a la ligne : un newline
+# final rend l'en-tete gRPC du client Gemini invalide ("Illegal header value").
+$keyFile = Join-Path $env:TEMP "gcp_api_key.txt"
+[System.IO.File]::WriteAllText($keyFile, $apiKey)
+try {
+    if (-not $secretExists) {
+        Write-Host "==> Creation du secret '$SecretName'..." -ForegroundColor Cyan
+        gcloud secrets create $SecretName --data-file="$keyFile"
+    } else {
+        Write-Host "==> Ajout d'une nouvelle version au secret '$SecretName'..." -ForegroundColor Yellow
+        gcloud secrets versions add $SecretName --data-file="$keyFile"
+    }
+}
+finally {
+    Remove-Item $keyFile -Force -ErrorAction SilentlyContinue
 }
 
 # -----------------------------------------------------------------------------
-# 5) Build + deploiement sur Cloud Run en une commande
+# 5) Autoriser le compte de service Cloud Run a lire le secret
+#    Le service tourne sous le compte de service Compute par defaut :
+#    <PROJECT_NUMBER>-compute@developer.gserviceaccount.com
+#    Il lui faut le role 'Secret Manager Secret Accessor' pour lire la cle.
+# -----------------------------------------------------------------------------
+$ProjectNumber = gcloud projects describe $ProjectId --format "value(projectNumber)"
+$RuntimeSa = "$ProjectNumber-compute@developer.gserviceaccount.com"
+Write-Host "==> Octroi de roles/secretmanager.secretAccessor a $RuntimeSa..." -ForegroundColor Cyan
+gcloud secrets add-iam-policy-binding $SecretName `
+    --member="serviceAccount:$RuntimeSa" `
+    --role="roles/secretmanager.secretAccessor"
+
+# -----------------------------------------------------------------------------
+# 6) Build + deploiement sur Cloud Run en une commande
 #    --source .        : Cloud Build lit le Dockerfile et pousse l'image
 #    --port 8000       : l'app ecoute sur 8000 (le Dockerfile expose ce port)
 #    --memory 2Gi      : torch + sentence-transformers sont gourmands au demarrage
@@ -108,7 +130,7 @@ gcloud run deploy $Service `
     --set-secrets "GCP_API_KEY=$SecretName`:latest"
 
 # -----------------------------------------------------------------------------
-# 6) Recuperation de l'URL publique et rappel des commandes de test
+# 7) Recuperation de l'URL publique et rappel des commandes de test
 # -----------------------------------------------------------------------------
 $Url = gcloud run services describe $Service --region $Region --format "value(status.url)"
 Write-Host ""
@@ -120,6 +142,6 @@ Write-Host "      curl -X POST `"$Url/ask`" -H `"Content-Type: application/json`
 Write-Host "    Swagger UI : $Url/docs" -ForegroundColor Green
 
 # -----------------------------------------------------------------------------
-# 7) (Optionnel) Supprimer le service apres la demo pour eviter tout cout
+# 8) (Optionnel) Supprimer le service apres la demo pour eviter tout cout
 # -----------------------------------------------------------------------------
 # gcloud run services delete $Service --region $Region

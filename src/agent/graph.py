@@ -54,8 +54,13 @@ def load_environment() -> None:
     load_dotenv(project_root / "src" / ".env")
 
     gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GCP_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if gemini_key and not os.getenv("GOOGLE_API_KEY"):
+    if gemini_key:
+        # Strip whitespace/newlines: a trailing newline (e.g. from a secret created
+        # via `echo key | ...`) produces an "Illegal header value" in the gRPC client.
+        gemini_key = gemini_key.strip()
         os.environ["GOOGLE_API_KEY"] = gemini_key
+        if os.getenv("GCP_API_KEY"):
+            os.environ["GCP_API_KEY"] = gemini_key
 
     try:
         import truststore

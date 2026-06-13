@@ -24,3 +24,19 @@ gcloud run deploy enterprise-ai-analyst `
   --timeout 300 `
   --set-env-vars "AGENT_MODEL=gemini-2.5-flash,FILTER_EXTRACTION_MODEL=gemini-2.5-flash-lite" `
   --set-secrets "GCP_API_KEY=gcp-api-key:latest"
+
+  # En cas de problème de permissions
+  gcloud secrets add-iam-policy-binding gcp-api-key `
+  --member="serviceAccount:174015192796-compute@developer.gserviceaccount.com" `
+  --role="roles/secretmanager.secretAccessor"
+
+  #Lien donné à la fin de l'exécution de l'étape 5
+
+
+  #MyCluster Endpoint : https://ad5e1d6e-df20-421a-9a66-403e9e19a60e.europe-west3-0.gcp.cloud.qdrant.io
+
+  #MyCluster API key : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6OWVlNzU3OTYtNjJlMS00ZmRjLWE2NTUtZmQ4MGJiYjQ1NTRhIn0.moMVrEkCcTZRImVUh762NTBMOYQELidTdFpRyTFnab0
+
+  Brancher Qdrant pour le vectoriel
+
+  #Pour supprimer le service après la demo :gcloud run services delete enterprise-ai-analyst --region europe-west1

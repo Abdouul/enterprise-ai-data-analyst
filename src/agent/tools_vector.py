@@ -47,6 +47,7 @@ def extract_filters_with_instructor(query: str) -> VectorSearchFilters | None:
     api_key = os.getenv("GCP_API_KEY")
     if not api_key:
         return None
+    api_key = api_key.strip()
     try:
         from langchain_google_genai import ChatGoogleGenerativeAI
     except ImportError:
